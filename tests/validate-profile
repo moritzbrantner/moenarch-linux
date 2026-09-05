@@ -13,7 +13,7 @@ bash -n "$profile" \
   "$repo_root/archiso/moenarch/airootfs/usr/local/lib/moenarch/finalize-live-root" \
   "$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-boot-marker"
 
-# shellcheck source=/dev/null
+# shellcheck source=/dev/null disable=SC1090,SC2154
 source "$profile"
 [[ "$iso_name" == "moenarch-linux" ]]
 [[ "$install_dir" == "moenarch" ]]
