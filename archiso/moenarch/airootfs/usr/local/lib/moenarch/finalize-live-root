@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+install -Dm0644 /usr/local/share/moenarch/os-release /usr/lib/os-release
+ln -sfn ../usr/lib/os-release /etc/os-release
+printf 'moenarch\n' >/etc/hostname
+cat >/etc/motd <<'EOF'
+Moenarch Linux
+Arch-derived. Small surface. Verified changes.
+EOF
+
+mkdir -p /etc/systemd/system/multi-user.target.wants
+ln -sfn /usr/lib/systemd/system/moenarch-boot-marker.service \
+  /etc/systemd/system/multi-user.target.wants/moenarch-boot-marker.service
+
+rm -f -- "$0"

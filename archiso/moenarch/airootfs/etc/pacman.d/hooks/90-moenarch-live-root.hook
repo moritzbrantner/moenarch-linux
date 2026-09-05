@@ -1,0 +1,12 @@
+# remove from airootfs!
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = filesystem
+
+[Action]
+Description = Applying Moenarch Linux live-system identity...
+When = PostTransaction
+Depends = coreutils
+Exec = /usr/local/lib/moenarch/finalize-live-root
