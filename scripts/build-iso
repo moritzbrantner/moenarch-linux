@@ -18,7 +18,7 @@ if [[ -z "${SOURCE_DATE_EPOCH:-}" ]]; then
   fi
 fi
 
-profile="$($repo_root/scripts/prepare-profile)"
+profile="$("$repo_root/scripts/prepare-profile")"
 rm -rf -- "$work_dir"
 mkdir -p -- "$out_dir"
 rm -f -- "$out_dir"/moenarch-linux-*.iso "$out_dir/SHA256SUMS" "$out_dir/build-manifest.txt"
