@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+serial_device="${MOENARCH_INSTALL_TTY:-/dev/ttyS0}"
+mount_point="${MOENARCH_INSTALL_ROOT:-/mnt/moenarch-install}"
+minimum_disk_bytes=$((4 * 1024 * 1024 * 1024))
+read -r -a kernel_arguments </proc/cmdline
+
+emit() {
+  printf '%s\n' "$*"
+  if [[ -w "$serial_device" ]]; then
+    printf '%s\n' "$*" >"$serial_device"
+  fi
+}
+
+fail() {
+  emit "MOENARCH_INSTALL_ERROR: $*"
+  exit 1
+}
+
+cmdline_has() {
+  local expected="$1"
+  local argument
+
+  for argument in "${kernel_arguments[@]}"; do
+    [[ "$argument" == "$expected" ]] && return 0
+  done
+  return 1
+}
+
+cmdline_value() {
+  local key="$1"
+  local argument
+
+  for argument in "${kernel_arguments[@]}"; do
+    case "$argument" in
+      "$key="*)
+        printf '%s\n' "${argument#*=}"
+        return 0
+        ;;
+    esac
+  done
+  return 1
+}
+
+cmdline_has 'moenarch.autoinstall=1' || fail 'explicit moenarch.autoinstall=1 is required'
+device="$(cmdline_value moenarch.install_device || true)"
+[[ -n "$device" ]] || fail 'explicit moenarch.install_device is required'
+[[ -b "$device" ]] || fail "$device is not a block device"
+[[ "$(lsblk -dnro TYPE "$device")" == "disk" ]] || fail "$device is not a whole disk"
+[[ "$(blockdev --getro "$device")" == "0" ]] || fail "$device is read-only"
+if lsblk -nrpo MOUNTPOINT "$device" | grep -q '[^[:space:]]'; then
+  fail "$device or one of its partitions is mounted"
+fi
+
+disk_bytes="$(blockdev --getsize64 "$device")"
+((disk_bytes >= minimum_disk_bytes)) || fail "$device is smaller than 4 GiB"
+
+case "$device" in
+  *[0-9]) root_partition="${device}p2" ;;
+  *) root_partition="${device}2" ;;
+esac
+
+emit "MOENARCH_INSTALL_START: $device"
+
+wipefs --all --force "$device"
+sgdisk --zap-all "$device"
+sgdisk --clear \
+  --new=1:0:+2M --typecode=1:ef02 --change-name=1:'BIOS boot' \
+  --new=2:0:0 --typecode=2:8300 --change-name=2:'Moenarch root' \
+  "$device"
+partprobe "$device"
+udevadm settle
+
+for _ in {1..20}; do
+  [[ -b "$root_partition" ]] && break
+  sleep 0.5
+done
+[[ -b "$root_partition" ]] || fail "root partition $root_partition did not appear"
+
+mkfs.ext4 -F -L MOENARCH_ROOT "$root_partition"
+mkdir -p "$mount_point"
+mount "$root_partition" "$mount_point"
+
+cleanup_mount() {
+  if mountpoint -q "$mount_point"; then
+    umount -R "$mount_point" || true
+  fi
+}
+trap cleanup_mount EXIT
+
+# Refresh package databases explicitly so installation evidence also proves repository access.
+pacman -Sy --noconfirm
+pacstrap -K "$mount_point" base linux grub
+genfstab -U "$mount_point" >"$mount_point/etc/fstab"
+
+install -Dm0644 /usr/local/share/moenarch/os-release "$mount_point/usr/lib/os-release"
+ln -sfn ../usr/lib/os-release "$mount_point/etc/os-release"
+printf 'moenarch\n' >"$mount_point/etc/hostname"
+ln -sfn /usr/share/zoneinfo/UTC "$mount_point/etc/localtime"
+
+install -Dm0755 /usr/local/bin/moenarch-installed-boot-marker \
+  "$mount_point/usr/local/bin/moenarch-installed-boot-marker"
+install -Dm0644 /usr/lib/systemd/system/moenarch-installed-boot-marker.service \
+  "$mount_point/usr/lib/systemd/system/moenarch-installed-boot-marker.service"
+mkdir -p "$mount_point/etc/systemd/system/multi-user.target.wants"
+ln -sfn /usr/lib/systemd/system/moenarch-installed-boot-marker.service \
+  "$mount_point/etc/systemd/system/multi-user.target.wants/moenarch-installed-boot-marker.service"
+
+cat >>"$mount_point/etc/default/grub" <<'EOF'
+GRUB_TIMEOUT=0
+GRUB_TERMINAL_INPUT=serial
+GRUB_TERMINAL_OUTPUT=serial
+GRUB_SERIAL_COMMAND="serial --unit=0 --speed=115200 --word=8 --parity=no --stop=1"
+GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200n8"
+EOF
+
+arch-chroot "$mount_point" grub-install --target=i386-pc --recheck "$device"
+arch-chroot "$mount_point" grub-mkconfig -o /boot/grub/grub.cfg
+
+sync
+umount -R "$mount_point"
+trap - EXIT
+
+emit 'MOENARCH_INSTALL_OK'
