@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2317 # cleanup is invoked indirectly by the EXIT trap.
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+runtime_base="${RUNNER_TEMP:-$repo_root/.build}"
+runtime_dir="${MOENARCH_INSTALL_TEST_DIR:-$runtime_base/moenarch-installed-system-test}"
+install_timeout="${MOENARCH_INSTALL_TIMEOUT:-900}"
+boot_timeout="${MOENARCH_INSTALLED_BOOT_TIMEOUT:-240}"
+iso_path="${1:-}"
+active_pid=""
+
+for command in qemu-system-x86_64 qemu-img bsdtar blkid; do
+  command -v "$command" >/dev/null 2>&1 || {
+    printf '%s is required for installed-system validation.\n' "$command" >&2
+    exit 1
+  }
+done
+
+if [[ -z "$iso_path" ]]; then
+  mapfile -t images < <(find "$repo_root/out" -maxdepth 1 -type f -name 'moenarch-linux-*.iso' -print | sort)
+  if [[ "${#images[@]}" -ne 1 ]]; then
+    printf 'Pass an ISO path or leave exactly one Moenarch ISO in out/.\n' >&2
+    exit 1
+  fi
+  iso_path="${images[0]}"
+fi
+
+cleanup() {
+  if [[ -n "$active_pid" ]] && kill -0 "$active_pid" 2>/dev/null; then
+    kill "$active_pid" 2>/dev/null || true
+    wait "$active_pid" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+
+wait_for_marker() {
+  local marker="$1"
+  local log_file="$2"
+  local timeout_seconds="$3"
+
+  for ((second = 0; second < timeout_seconds; second++)); do
+    if grep -q "$marker" "$log_file"; then
+      cleanup
+      active_pid=""
+      return 0
+    fi
+    if ! kill -0 "$active_pid" 2>/dev/null; then
+      break
+    fi
+    sleep 1
+  done
+
+  cat "$log_file" >&2
+  printf 'Timed out waiting for %s after %ss.\n' "$marker" "$timeout_seconds" >&2
+  return 1
+}
+
+rm -rf -- "$runtime_dir"
+mkdir -p -- "$runtime_dir/iso-root"
+disk_path="$runtime_dir/moenarch-system.qcow2"
+install_log="$runtime_dir/install-serial.log"
+boot_log="$runtime_dir/installed-boot-serial.log"
+: >"$install_log"
+: >"$boot_log"
+
+qemu-img create -f qcow2 "$disk_path" 8G
+bsdtar -xf "$iso_path" -C "$runtime_dir/iso-root" \
+  moenarch/boot/x86_64/vmlinuz-linux \
+  moenarch/boot/x86_64/initramfs-linux.img
+
+kernel_path="$runtime_dir/iso-root/moenarch/boot/x86_64/vmlinuz-linux"
+initrd_path="$runtime_dir/iso-root/moenarch/boot/x86_64/initramfs-linux.img"
+iso_uuid="$(blkid -s UUID -o value "$iso_path")"
+[[ -n "$iso_uuid" ]] || {
+  printf 'Could not determine the ISO filesystem UUID.\n' >&2
+  exit 1
+}
+
+qemu-system-x86_64 \
+  -machine accel=tcg \
+  -m 2048 \
+  -smp 2 \
+  -drive "file=$disk_path,format=qcow2,if=virtio" \
+  -cdrom "$iso_path" \
+  -kernel "$kernel_path" \
+  -initrd "$initrd_path" \
+  -append "archisobasedir=moenarch archisosearchuuid=$iso_uuid moenarch.autoinstall=1 moenarch.install_device=/dev/vda console=ttyS0,115200n8" \
+  -netdev user,id=net0 \
+  -device virtio-net-pci,netdev=net0 \
+  -display none \
+  -monitor none \
+  -serial "file:$install_log" \
+  -no-reboot &
+active_pid=$!
+
+wait_for_marker 'MOENARCH_INSTALL_OK' "$install_log" "$install_timeout"
+
+qemu-system-x86_64 \
+  -machine accel=tcg \
+  -m 1536 \
+  -smp 2 \
+  -boot c \
+  -drive "file=$disk_path,format=qcow2,if=virtio" \
+  -display none \
+  -monitor none \
+  -serial "file:$boot_log" \
+  -no-reboot &
+active_pid=$!
+
+wait_for_marker 'MOENARCH_INSTALLED_BOOT_OK' "$boot_log" "$boot_timeout"
+grep -q '^ID=moenarch$' "$boot_log" || {
+  cat "$boot_log" >&2
+  printf 'Installed system did not report ID=moenarch.\n' >&2
+  exit 1
+}
+
+printf 'Moenarch installed-system verification succeeded.\n'

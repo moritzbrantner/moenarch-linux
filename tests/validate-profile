@@ -5,14 +5,19 @@ repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 profile="$repo_root/archiso/moenarch/profiledef.sh"
 os_release="$repo_root/archiso/moenarch/airootfs/usr/local/share/moenarch/os-release"
 hook="$repo_root/archiso/moenarch/airootfs/etc/pacman.d/hooks/90-moenarch-live-root.hook"
-service="$repo_root/archiso/moenarch/airootfs/usr/lib/systemd/system/moenarch-boot-marker.service"
+boot_service="$repo_root/archiso/moenarch/airootfs/usr/lib/systemd/system/moenarch-boot-marker.service"
+autoinstall_service="$repo_root/archiso/moenarch/airootfs/usr/lib/systemd/system/moenarch-autoinstall.service"
+autoinstall="$repo_root/archiso/moenarch/airootfs/usr/local/lib/moenarch/autoinstall"
 
 bash -n "$profile" \
   "$repo_root/scripts/prepare-profile" \
   "$repo_root/scripts/build-iso" \
   "$repo_root/scripts/test-iso-boot" \
+  "$repo_root/scripts/test-installed-system" \
   "$repo_root/archiso/moenarch/airootfs/usr/local/lib/moenarch/finalize-live-root" \
-  "$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-boot-marker"
+  "$autoinstall" \
+  "$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-boot-marker" \
+  "$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-installed-boot-marker"
 
 grep -Fxq 'iso_name="moenarch-linux"' "$profile"
 grep -Fxq 'install_dir="moenarch"' "$profile"
@@ -27,8 +32,20 @@ grep -Fxq 'Target = filesystem' "$hook"
 grep -Fxq 'When = PostTransaction' "$hook"
 grep -Fq 'remove from airootfs!' "$hook"
 
-if grep -Fq 'After=multi-user.target' "$service"; then
+grep -Fxq 'ConditionKernelCommandLine=moenarch.autoinstall=1' "$autoinstall_service"
+grep -Fq 'moenarch.install_device' "$autoinstall"
+grep -Fq 'explicit moenarch.install_device is required' "$autoinstall"
+grep -Fq 'lsblk -dnro TYPE' "$autoinstall"
+grep -Fq 'blockdev --getro' "$autoinstall"
+grep -Fq 'minimum_disk_bytes' "$autoinstall"
+
+if grep -Fq 'After=multi-user.target' "$boot_service"; then
   printf 'Boot marker must not order itself after multi-user.target.\n' >&2
+  exit 1
+fi
+
+if grep -Eq 'moenarch\.install_device=/(dev/)?(sd|vd|nvme|mmc)' "$autoinstall_service"; then
+  printf 'Autoinstall service must not provide a default target disk.\n' >&2
   exit 1
 fi
 

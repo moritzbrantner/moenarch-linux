@@ -1,0 +1,9 @@
+[Unit]
+Description=Emit Moenarch installed-system boot marker
+ConditionPathExists=/dev/ttyS0
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/moenarch-installed-boot-marker
+StandardOutput=null
+StandardError=journal

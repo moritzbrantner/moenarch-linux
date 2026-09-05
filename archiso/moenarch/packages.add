@@ -1,2 +1,8 @@
-# Packages Moenarch adds to Archiso's releng package set.
+# Packages Moenarch requires in addition to the inherited Archiso releng profile.
+# Keep acceptance-harness dependencies explicit even when releng already carries them.
+arch-install-scripts
+e2fsprogs
 git
+gptfdisk
+grub
+parted
