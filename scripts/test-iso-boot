@@ -4,7 +4,8 @@ set -euo pipefail
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 timeout_seconds="${MOENARCH_BOOT_TIMEOUT:-180}"
-log_file="${MOENARCH_BOOT_LOG:-$repo_root/.build/qemu-serial.log}"
+log_dir="${RUNNER_TEMP:-$repo_root/.build}"
+log_file="${MOENARCH_BOOT_LOG:-$log_dir/moenarch-qemu-serial.log}"
 iso_path="${1:-}"
 
 command -v qemu-system-x86_64 >/dev/null 2>&1 || {
