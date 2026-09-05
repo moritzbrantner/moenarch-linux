@@ -33,6 +33,8 @@ grep -Fxq 'When = PostTransaction' "$hook"
 grep -Fq 'remove from airootfs!' "$hook"
 
 grep -Fxq 'ConditionKernelCommandLine=moenarch.autoinstall=1' "$autoinstall_service"
+grep -Fq "cmdline_has 'moenarch.autoinstall=1'" "$autoinstall"
+grep -Fq 'explicit moenarch.autoinstall=1 is required' "$autoinstall"
 grep -Fq 'moenarch.install_device' "$autoinstall"
 grep -Fq 'explicit moenarch.install_device is required' "$autoinstall"
 grep -Fq 'lsblk -dnro TYPE' "$autoinstall"
