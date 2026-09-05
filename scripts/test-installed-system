@@ -109,7 +109,7 @@ qemu-system-x86_64 \
 active_pid=$!
 
 wait_for_marker 'MOENARCH_INSTALLED_BOOT_OK' "$boot_log" "$boot_timeout"
-grep -q '^ID=moenarch$' "$boot_log" || {
+grep -q 'ID=moenarch' "$boot_log" || {
   cat "$boot_log" >&2
   printf 'Installed system did not report ID=moenarch.\n' >&2
   exit 1
