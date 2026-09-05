@@ -41,7 +41,7 @@ jobs:
             -v "$PWD:/workspace" \
             -w /workspace \
             archlinux:base-devel \
-            bash -lc 'pacman -Syu --noconfirm --needed archiso git && ./scripts/build-iso'
+            bash -lc 'pacman -Syu --noconfirm --needed archiso git && git config --global --add safe.directory /workspace && ./scripts/build-iso'
       - name: Install QEMU
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
       - name: Boot and verify distribution identity
