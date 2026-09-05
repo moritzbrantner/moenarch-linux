@@ -4,6 +4,7 @@ set -euo pipefail
 serial_device="${MOENARCH_INSTALL_TTY:-/dev/ttyS0}"
 mount_point="${MOENARCH_INSTALL_ROOT:-/mnt/moenarch-install}"
 minimum_disk_bytes=$((4 * 1024 * 1024 * 1024))
+read -r -a kernel_arguments </proc/cmdline
 
 emit() {
   printf '%s\n' "$*"
@@ -17,11 +18,21 @@ fail() {
   exit 1
 }
 
+cmdline_has() {
+  local expected="$1"
+  local argument
+
+  for argument in "${kernel_arguments[@]}"; do
+    [[ "$argument" == "$expected" ]] && return 0
+  done
+  return 1
+}
+
 cmdline_value() {
   local key="$1"
   local argument
 
-  for argument in $(< /proc/cmdline); do
+  for argument in "${kernel_arguments[@]}"; do
     case "$argument" in
       "$key="*)
         printf '%s\n' "${argument#*=}"
@@ -32,6 +43,7 @@ cmdline_value() {
   return 1
 }
 
+cmdline_has 'moenarch.autoinstall=1' || fail 'explicit moenarch.autoinstall=1 is required'
 device="$(cmdline_value moenarch.install_device || true)"
 [[ -n "$device" ]] || fail 'explicit moenarch.install_device is required'
 [[ -b "$device" ]] || fail "$device is not a block device"
