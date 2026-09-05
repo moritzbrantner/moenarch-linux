@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+timeout_seconds="${MOENARCH_BOOT_TIMEOUT:-180}"
+log_file="${MOENARCH_BOOT_LOG:-$repo_root/.build/qemu-serial.log}"
+iso_path="${1:-}"
+
+command -v qemu-system-x86_64 >/dev/null 2>&1 || {
+  printf 'qemu-system-x86_64 is required for boot validation.\n' >&2
+  exit 1
+}
+
+if [[ -z "$iso_path" ]]; then
+  mapfile -t images < <(find "$repo_root/out" -maxdepth 1 -type f -name 'moenarch-linux-*.iso' -print | sort)
+  if [[ "${#images[@]}" -ne 1 ]]; then
+    printf 'Pass an ISO path or leave exactly one Moenarch ISO in out/.\n' >&2
+    exit 1
+  fi
+  iso_path="${images[0]}"
+fi
+
+mkdir -p -- "$(dirname -- "$log_file")"
+: >"$log_file"
+
+qemu-system-x86_64 \
+  -machine accel=tcg \
+  -m 1536 \
+  -smp 2 \
+  -boot d \
+  -cdrom "$iso_path" \
+  -display none \
+  -monitor none \
+  -serial "file:$log_file" \
+  -no-reboot &
+qemu_pid=$!
+
+cleanup() {
+  if kill -0 "$qemu_pid" 2>/dev/null; then
+    kill "$qemu_pid" 2>/dev/null || true
+    wait "$qemu_pid" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
+
+for ((second = 0; second < timeout_seconds; second++)); do
+  if grep -q 'MOENARCH_BOOT_OK' "$log_file" && grep -q 'ID=moenarch' "$log_file"; then
+    printf 'Moenarch ISO boot verification succeeded.\n'
+    exit 0
+  fi
+
+  if ! kill -0 "$qemu_pid" 2>/dev/null; then
+    break
+  fi
+  sleep 1
+done
+
+cat "$log_file" >&2
+printf 'Moenarch ISO did not reach the verified live-system state within %ss.\n' "$timeout_seconds" >&2
+exit 1

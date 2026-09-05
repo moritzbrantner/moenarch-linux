@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+source_profile="${ARCHISO_RELENG_PROFILE:-/usr/share/archiso/configs/releng}"
+target_profile="${MOENARCH_PROFILE_DIR:-$repo_root/.build/profile}"
+
+if [[ ! -f "$source_profile/profiledef.sh" || ! -f "$source_profile/packages.x86_64" ]]; then
+  printf 'Archiso releng profile not found at %s\n' "$source_profile" >&2
+  exit 1
+fi
+
+rm -rf -- "$target_profile"
+mkdir -p -- "$(dirname -- "$target_profile")"
+cp -a -- "$source_profile" "$target_profile"
+
+cp -- "$repo_root/archiso/moenarch/profiledef.sh" "$target_profile/profiledef.sh"
+cp -a -- "$repo_root/archiso/moenarch/airootfs/." "$target_profile/airootfs/"
+
+while IFS= read -r package; do
+  [[ -z "$package" || "$package" == \#* ]] && continue
+  printf '%s\n' "$package" >>"$target_profile/packages.x86_64"
+done <"$repo_root/archiso/moenarch/packages.add"
+
+sort -u -o "$target_profile/packages.x86_64" "$target_profile/packages.x86_64"
+printf '%s\n' "$target_profile"

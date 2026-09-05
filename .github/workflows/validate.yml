@@ -1,0 +1,57 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Validate profile contracts
+        run: ./tests/validate-profile
+      - name: Shellcheck
+        run: |
+          shellcheck \
+            archiso/moenarch/profiledef.sh \
+            archiso/moenarch/airootfs/usr/local/lib/moenarch/finalize-live-root \
+            archiso/moenarch/airootfs/usr/local/bin/moenarch-boot-marker \
+            scripts/prepare-profile \
+            scripts/build-iso \
+            scripts/test-iso-boot \
+            tests/validate-profile
+
+  iso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Moenarch ISO with Archiso
+        run: |
+          docker run --rm --privileged \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            archlinux:base-devel \
+            bash -lc 'pacman -Syu --noconfirm --needed archiso git && ./scripts/build-iso'
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
+      - name: Boot and verify distribution identity
+        run: ./scripts/test-iso-boot
+      - name: Upload ISO evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: moenarch-linux-iso
+          path: |
+            out/*.iso
+            out/SHA256SUMS
+            out/build-manifest.txt
+          if-no-files-found: error

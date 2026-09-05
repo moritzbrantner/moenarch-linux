@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+serial_device="${MOENARCH_BOOT_MARKER_TTY:-/dev/ttyS0}"
+[[ -w "$serial_device" ]] || exit 0
+
+{
+  printf 'MOENARCH_BOOT_OK\n'
+  cat /etc/os-release
+} >"$serial_device"

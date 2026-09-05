@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+profile="$repo_root/archiso/moenarch/profiledef.sh"
+os_release="$repo_root/archiso/moenarch/airootfs/usr/local/share/moenarch/os-release"
+hook="$repo_root/archiso/moenarch/airootfs/etc/pacman.d/hooks/90-moenarch-live-root.hook"
+
+bash -n "$profile" \
+  "$repo_root/scripts/prepare-profile" \
+  "$repo_root/scripts/build-iso" \
+  "$repo_root/scripts/test-iso-boot" \
+  "$repo_root/archiso/moenarch/airootfs/usr/local/lib/moenarch/finalize-live-root" \
+  "$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-boot-marker"
+
+# shellcheck source=/dev/null
+source "$profile"
+[[ "$iso_name" == "moenarch-linux" ]]
+[[ "$install_dir" == "moenarch" ]]
+[[ " ${bootmodes[*]} " == *" bios.syslinux "* ]]
+[[ " ${bootmodes[*]} " == *" uefi.systemd-boot "* ]]
+
+grep -Fxq 'NAME="Moenarch Linux"' "$os_release"
+grep -Fxq 'ID=moenarch' "$os_release"
+grep -Fxq 'ID_LIKE=arch' "$os_release"
+grep -Fxq 'Target = filesystem' "$hook"
+grep -Fxq 'When = PostTransaction' "$hook"
+grep -Fq 'remove from airootfs!' "$hook"
+
+echo 'Moenarch profile validation succeeded.'
