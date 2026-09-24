@@ -1,0 +1,295 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+catalog="${MOENARCH_PROJECT_CATALOG:-/usr/local/share/moenarch/projects.lock.tsv}"
+base_url="${MOENARCH_PROJECT_BASE_URL:-https://github.com}"
+default_workspace="${MOENARCH_PROJECTS_DIR:-${HOME:-/root}/src/moenarch}"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  moenarch-projects groups
+  moenarch-projects list [group]
+  moenarch-projects status [group] [workspace]
+  moenarch-projects bootstrap [group] [workspace]
+  moenarch-projects validate-catalog
+
+Groups are declared by the installed projects.lock.tsv catalog. The special group
+"all" selects every project. Bootstrap clones missing projects at their exact
+locked revisions and refuses to modify existing checkouts that drift or contain
+local changes.
+EOF
+}
+
+require_catalog() {
+  [[ -r "$catalog" ]] || {
+    printf 'Project catalog is not readable: %s\n' "$catalog" >&2
+    exit 1
+  }
+}
+
+group_matches() {
+  local groups="$1"
+  local requested="$2"
+
+  [[ "$requested" == "all" || ",$groups," == *",$requested,"* ]]
+}
+
+validate_catalog() {
+  local line_number=0
+  local count=0
+  local name repository revision groups extra
+  declare -A seen_names=()
+  declare -A seen_repositories=()
+
+  require_catalog
+
+  while IFS=$'\t' read -r name repository revision groups extra; do
+    line_number=$((line_number + 1))
+    [[ -z "$name" || "$name" == \#* ]] && continue
+
+    if [[ -n "${extra:-}" ]]; then
+      printf 'Catalog line %d has more than four columns.\n' "$line_number" >&2
+      return 1
+    fi
+    [[ "$name" =~ ^[A-Za-z0-9._-]+$ ]] || {
+      printf 'Catalog line %d has invalid project name: %s\n' "$line_number" "$name" >&2
+      return 1
+    }
+    [[ "$repository" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]] || {
+      printf 'Catalog line %d has invalid repository: %s\n' "$line_number" "$repository" >&2
+      return 1
+    }
+    [[ "$revision" =~ ^[0-9a-f]{40}$ ]] || {
+      printf 'Catalog line %d does not pin an exact revision.\n' "$line_number" >&2
+      return 1
+    }
+    [[ "$groups" =~ ^[a-z0-9-]+(,[a-z0-9-]+)*$ ]] || {
+      printf 'Catalog line %d has invalid groups: %s\n' "$line_number" "$groups" >&2
+      return 1
+    }
+    [[ -z "${seen_names[$name]:-}" ]] || {
+      printf 'Duplicate project name in catalog: %s\n' "$name" >&2
+      return 1
+    }
+    [[ -z "${seen_repositories[$repository]:-}" ]] || {
+      printf 'Duplicate repository in catalog: %s\n' "$repository" >&2
+      return 1
+    }
+
+    seen_names["$name"]=1
+    seen_repositories["$repository"]=1
+    count=$((count + 1))
+  done <"$catalog"
+
+  ((count > 0)) || {
+    printf 'Project catalog contains no projects.\n' >&2
+    return 1
+  }
+
+  printf 'catalog-ok\t%d\n' "$count"
+}
+
+list_projects() {
+  local requested="$1"
+  local name repository revision groups
+
+  validate_catalog >/dev/null
+  while IFS=$'\t' read -r name repository revision groups; do
+    [[ -z "$name" || "$name" == \#* ]] && continue
+    if group_matches "$groups" "$requested"; then
+      printf '%s\t%s\t%s\t%s\n' "$name" "$repository" "$revision" "$groups"
+    fi
+  done <"$catalog"
+}
+
+expected_remote() {
+  local repository="$1"
+  printf '%s/%s.git\n' "${base_url%/}" "$repository"
+}
+
+checkout_state() {
+  local target="$1"
+  local remote="$2"
+  local revision="$3"
+  local actual_remote actual_revision
+
+  [[ -d "$target" ]] || {
+    printf 'missing'
+    return 0
+  }
+  git -C "$target" rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+    printf 'conflict:not-git'
+    return 0
+  }
+
+  actual_remote="$(git -C "$target" remote get-url origin 2>/dev/null || true)"
+  [[ "$actual_remote" == "$remote" ]] || {
+    printf 'conflict:remote'
+    return 0
+  }
+
+  if [[ -n "$(git -C "$target" status --porcelain --untracked-files=normal)" ]]; then
+    printf 'conflict:modified'
+    return 0
+  fi
+
+  actual_revision="$(git -C "$target" rev-parse HEAD 2>/dev/null || true)"
+  [[ "$actual_revision" == "$revision" ]] || {
+    printf 'conflict:revision'
+    return 0
+  }
+
+  printf 'ready'
+}
+
+validate_workspace() {
+  local workspace="$1"
+
+  [[ -n "$workspace" && "$workspace" != "/" ]] || {
+    printf 'Refusing unsafe workspace path: %s\n' "$workspace" >&2
+    return 1
+  }
+}
+
+show_status() {
+  local requested="$1"
+  local workspace="$2"
+  local name repository revision groups remote target state
+
+  validate_workspace "$workspace"
+  while IFS=$'\t' read -r name repository revision groups; do
+    [[ -z "$name" || "$name" == \#* ]] && continue
+    group_matches "$groups" "$requested" || continue
+
+    remote="$(expected_remote "$repository")"
+    target="$workspace/$name"
+    state="$(checkout_state "$target" "$remote" "$revision")"
+    printf '%s\t%s\t%s\n' "$state" "$name" "$revision"
+  done <"$catalog"
+}
+
+clone_locked_project() {
+  local name="$1"
+  local repository="$2"
+  local revision="$3"
+  local workspace="$4"
+  local remote target
+
+  remote="$(expected_remote "$repository")"
+  target="$workspace/$name"
+
+  if [[ "$base_url" == file://* ]]; then
+    if ! git clone --no-checkout --quiet "$remote" "$target"; then
+      [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
+      return 1
+    fi
+  else
+    if ! git clone --filter=blob:none --no-checkout --quiet "$remote" "$target"; then
+      [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
+      return 1
+    fi
+  fi
+
+  if ! git -C "$target" -c advice.detachedHead=false checkout --quiet --detach "$revision"; then
+    [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
+    return 1
+  fi
+
+  [[ "$(git -C "$target" rev-parse HEAD)" == "$revision" ]] || {
+    [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
+    return 1
+  }
+}
+
+bootstrap_projects() {
+  local requested="$1"
+  local workspace="$2"
+  local name repository revision groups remote target state
+  local conflicts=0
+
+  validate_catalog >/dev/null
+  validate_workspace "$workspace"
+  command -v git >/dev/null 2>&1 || {
+    printf 'git is required to bootstrap project sources.\n' >&2
+    return 1
+  }
+
+  mkdir -p -- "$workspace"
+  export GIT_TERMINAL_PROMPT=0
+
+  while IFS=$'\t' read -r name repository revision groups; do
+    [[ -z "$name" || "$name" == \#* ]] && continue
+    group_matches "$groups" "$requested" || continue
+
+    remote="$(expected_remote "$repository")"
+    target="$workspace/$name"
+    state="$(checkout_state "$target" "$remote" "$revision")"
+
+    case "$state" in
+      ready)
+        printf 'unchanged\t%s\t%s\n' "$name" "$revision"
+        ;;
+      missing)
+        if clone_locked_project "$name" "$repository" "$revision" "$workspace"; then
+          printf 'changed\t%s\t%s\n' "$name" "$revision"
+        else
+          printf 'conflict\t%s\tclone-failed\n' "$name" >&2
+          conflicts=$((conflicts + 1))
+        fi
+        ;;
+      conflict:*)
+        printf 'conflict\t%s\t%s\n' "$name" "${state#conflict:}" >&2
+        conflicts=$((conflicts + 1))
+        ;;
+    esac
+  done <"$catalog"
+
+  ((conflicts == 0))
+}
+
+show_groups() {
+  validate_catalog >/dev/null
+  {
+    printf 'all\n'
+    awk -F '\t' '
+      $0 !~ /^#/ && NF >= 4 {
+        count = split($4, groups, ",")
+        for (i = 1; i <= count; i++) print groups[i]
+      }
+    ' "$catalog"
+  } | sort -u
+}
+
+command_name="${1:-list}"
+
+case "$command_name" in
+  groups)
+    [[ "$#" -eq 1 ]] || { usage >&2; exit 2; }
+    show_groups
+    ;;
+  list)
+    [[ "$#" -le 2 ]] || { usage >&2; exit 2; }
+    list_projects "${2:-default}"
+    ;;
+  status)
+    [[ "$#" -le 3 ]] || { usage >&2; exit 2; }
+    validate_catalog >/dev/null
+    show_status "${2:-default}" "${3:-$default_workspace}"
+    ;;
+  bootstrap)
+    [[ "$#" -le 3 ]] || { usage >&2; exit 2; }
+    bootstrap_projects "${2:-default}" "${3:-$default_workspace}"
+    ;;
+  validate-catalog)
+    [[ "$#" -eq 1 ]] || { usage >&2; exit 2; }
+    validate_catalog
+    ;;
+  -h|--help|help)
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+esac

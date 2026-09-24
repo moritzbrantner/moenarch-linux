@@ -46,7 +46,9 @@ cleanup() {
 trap cleanup EXIT
 
 for ((second = 0; second < timeout_seconds; second++)); do
-  if grep -q 'MOENARCH_BOOT_OK' "$log_file" && grep -q 'ID=moenarch' "$log_file"; then
+  if grep -q 'MOENARCH_BOOT_OK' "$log_file" \
+    && grep -q 'MOENARCH_PROJECTS_READY all=47 default=18' "$log_file" \
+    && grep -q 'ID=moenarch' "$log_file"; then
     printf 'Moenarch ISO boot verification succeeded.\n'
     exit 0
   fi

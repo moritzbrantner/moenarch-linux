@@ -93,7 +93,7 @@ trap cleanup_mount EXIT
 # live-system keyring. pacstrap -K would intentionally create an empty target
 # keyring, which cannot authenticate the packages needed to populate itself.
 pacman -Sy --noconfirm
-pacstrap "$mount_point" base linux grub
+pacstrap "$mount_point" base linux grub git
 genfstab -U "$mount_point" >"$mount_point/etc/fstab"
 
 install -Dm0644 /usr/local/share/moenarch/os-release "$mount_point/usr/lib/os-release"
@@ -105,6 +105,10 @@ install -Dm0755 /usr/local/bin/moenarch-installed-boot-marker \
   "$mount_point/usr/local/bin/moenarch-installed-boot-marker"
 install -Dm0644 /usr/lib/systemd/system/moenarch-installed-boot-marker.service \
   "$mount_point/usr/lib/systemd/system/moenarch-installed-boot-marker.service"
+install -Dm0755 /usr/local/bin/moenarch-projects \
+  "$mount_point/usr/local/bin/moenarch-projects"
+install -Dm0644 /usr/local/share/moenarch/projects.lock.tsv \
+  "$mount_point/usr/local/share/moenarch/projects.lock.tsv"
 mkdir -p "$mount_point/etc/systemd/system/multi-user.target.wants"
 ln -sfn /usr/lib/systemd/system/moenarch-installed-boot-marker.service \
   "$mount_point/etc/systemd/system/multi-user.target.wants/moenarch-installed-boot-marker.service"
