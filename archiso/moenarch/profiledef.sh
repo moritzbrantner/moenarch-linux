@@ -23,5 +23,7 @@ file_permissions=(
   ["/usr/local/bin/Installation_guide"]="0:0:755"
   ["/usr/local/bin/livecd-sound"]="0:0:755"
   ["/usr/local/bin/moenarch-boot-marker"]="0:0:755"
+  ["/usr/local/bin/moenarch-installed-boot-marker"]="0:0:755"
+  ["/usr/local/lib/moenarch/autoinstall"]="0:0:755"
   ["/usr/local/lib/moenarch/finalize-live-root"]="0:0:755"
 )

@@ -12,5 +12,7 @@ EOF
 mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sfn /usr/lib/systemd/system/moenarch-boot-marker.service \
   /etc/systemd/system/multi-user.target.wants/moenarch-boot-marker.service
+ln -sfn /usr/lib/systemd/system/moenarch-autoinstall.service \
+  /etc/systemd/system/multi-user.target.wants/moenarch-autoinstall.service
 
 rm -f -- "$0"

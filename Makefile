@@ -1,4 +1,4 @@
-.PHONY: validate build boot-test
+.PHONY: validate build boot-test install-test
 
 validate:
 	./tests/validate-profile
@@ -8,3 +8,6 @@ build:
 
 boot-test:
 	./scripts/test-iso-boot
+
+install-test:
+	./scripts/test-installed-system
