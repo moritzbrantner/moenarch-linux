@@ -40,7 +40,7 @@ grep -Fq 'explicit moenarch.install_device is required' "$autoinstall"
 grep -Fq 'lsblk -dnro TYPE' "$autoinstall"
 grep -Fq 'blockdev --getro' "$autoinstall"
 grep -Fq 'minimum_disk_bytes' "$autoinstall"
-grep -Fq 'pacstrap "$mount_point" base linux grub' "$autoinstall"
+grep -Fq "pacstrap \"\$mount_point\" base linux grub" "$autoinstall"
 
 if grep -Eq '^[[:space:]]*pacstrap[[:space:]]+-K([[:space:]]|$)' "$autoinstall"; then
   printf 'Installed-system bootstrap must seed the verified live keyring, not create an empty target keyring.\n' >&2
