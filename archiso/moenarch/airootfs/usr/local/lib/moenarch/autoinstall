@@ -89,9 +89,11 @@ cleanup_mount() {
 }
 trap cleanup_mount EXIT
 
-# Refresh package databases explicitly so installation evidence also proves repository access.
+# Refresh repository metadata, then seed the new root from the already-verified
+# live-system keyring. pacstrap -K would intentionally create an empty target
+# keyring, which cannot authenticate the packages needed to populate itself.
 pacman -Sy --noconfirm
-pacstrap -K "$mount_point" base linux grub
+pacstrap "$mount_point" base linux grub
 genfstab -U "$mount_point" >"$mount_point/etc/fstab"
 
 install -Dm0644 /usr/local/share/moenarch/os-release "$mount_point/usr/lib/os-release"
