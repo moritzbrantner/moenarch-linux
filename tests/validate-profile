@@ -42,7 +42,7 @@ grep -Fq 'blockdev --getro' "$autoinstall"
 grep -Fq 'minimum_disk_bytes' "$autoinstall"
 grep -Fq 'pacstrap "$mount_point" base linux grub' "$autoinstall"
 
-if grep -Fq 'pacstrap -K' "$autoinstall"; then
+if grep -Eq '^[[:space:]]*pacstrap[[:space:]]+-K([[:space:]]|$)' "$autoinstall"; then
   printf 'Installed-system bootstrap must seed the verified live keyring, not create an empty target keyring.\n' >&2
   exit 1
 fi
