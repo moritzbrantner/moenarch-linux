@@ -2,6 +2,7 @@
 
 validate:
 	./tests/validate-profile
+	bash ./tests/test-project-workspace
 
 build:
 	./scripts/build-iso

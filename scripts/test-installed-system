@@ -114,5 +114,10 @@ grep -q 'ID=moenarch' "$boot_log" || {
   printf 'Installed system did not report ID=moenarch.\n' >&2
   exit 1
 }
+grep -q 'MOENARCH_PROJECTS_READY all=47 default=18' "$boot_log" || {
+  cat "$boot_log" >&2
+  printf 'Installed system did not expose the locked project catalog.\n' >&2
+  exit 1
+}
 
 printf 'Moenarch installed-system verification succeeded.\n'

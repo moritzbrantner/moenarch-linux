@@ -8,14 +8,18 @@ hook="$repo_root/archiso/moenarch/airootfs/etc/pacman.d/hooks/90-moenarch-live-r
 boot_service="$repo_root/archiso/moenarch/airootfs/usr/lib/systemd/system/moenarch-boot-marker.service"
 autoinstall_service="$repo_root/archiso/moenarch/airootfs/usr/lib/systemd/system/moenarch-autoinstall.service"
 autoinstall="$repo_root/archiso/moenarch/airootfs/usr/local/lib/moenarch/autoinstall"
+project_tool="$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-projects"
+project_catalog="$repo_root/archiso/moenarch/airootfs/usr/local/share/moenarch/projects.lock.tsv"
 
 bash -n "$profile" \
   "$repo_root/scripts/prepare-profile" \
   "$repo_root/scripts/build-iso" \
   "$repo_root/scripts/test-iso-boot" \
   "$repo_root/scripts/test-installed-system" \
+  "$repo_root/tests/test-project-workspace" \
   "$repo_root/archiso/moenarch/airootfs/usr/local/lib/moenarch/finalize-live-root" \
   "$autoinstall" \
+  "$project_tool" \
   "$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-boot-marker" \
   "$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-installed-boot-marker"
 
@@ -23,6 +27,7 @@ grep -Fxq 'iso_name="moenarch-linux"' "$profile"
 grep -Fxq 'install_dir="moenarch"' "$profile"
 grep -Fq "'bios.syslinux'" "$profile"
 grep -Fq "'uefi.systemd-boot'" "$profile"
+grep -Fxq '  ["/usr/local/bin/moenarch-projects"]="0:0:755"' "$profile"
 
 grep -Fxq 'NAME="Moenarch Linux"' "$os_release"
 grep -Fxq 'ID=moenarch' "$os_release"
@@ -40,12 +45,41 @@ grep -Fq 'explicit moenarch.install_device is required' "$autoinstall"
 grep -Fq 'lsblk -dnro TYPE' "$autoinstall"
 grep -Fq 'blockdev --getro' "$autoinstall"
 grep -Fq 'minimum_disk_bytes' "$autoinstall"
-grep -Fq "pacstrap \"\$mount_point\" base linux grub" "$autoinstall"
+grep -Fxq "pacstrap \"\$mount_point\" base linux grub git" "$autoinstall"
+grep -Fq 'install -Dm0755 /usr/local/bin/moenarch-projects' "$autoinstall"
+grep -Fq 'install -Dm0644 /usr/local/share/moenarch/projects.lock.tsv' "$autoinstall"
 
 if grep -Eq '^[[:space:]]*pacstrap[[:space:]]+-K([[:space:]]|$)' "$autoinstall"; then
   printf 'Installed-system bootstrap must seed the verified live keyring, not create an empty target keyring.\n' >&2
   exit 1
 fi
+
+catalog_validation="$(
+  MOENARCH_PROJECT_CATALOG="$project_catalog" bash "$project_tool" validate-catalog
+)"
+[[ "$catalog_validation" == $'catalog-ok\t47' ]] || {
+  printf 'Expected a valid 47-project lock catalog, got: %s\n' "$catalog_validation" >&2
+  exit 1
+}
+
+all_project_count="$(
+  MOENARCH_PROJECT_CATALOG="$project_catalog" bash "$project_tool" list all | wc -l
+)"
+default_project_count="$(
+  MOENARCH_PROJECT_CATALOG="$project_catalog" bash "$project_tool" list default | wc -l
+)"
+[[ "$all_project_count" -eq 47 ]] || {
+  printf 'Expected 47 integrated projects, got %s.\n' "$all_project_count" >&2
+  exit 1
+}
+[[ "$default_project_count" -eq 18 ]] || {
+  printf 'Expected 18 default projects, got %s.\n' "$default_project_count" >&2
+  exit 1
+}
+grep -Fq $'coding-agent-conventions\tmoritzbrantner/coding-agent-conventions\t' "$project_catalog"
+grep -Fq $'moenarch-foundation\tmoritzbrantner/moenarch-foundation\t' "$project_catalog"
+grep -Fq $'asset-tooling\tmoritzbrantner/asset-tooling\t' "$project_catalog"
+grep -Fq $'mmorpg\tmoritzbrantner/mmorpg\t' "$project_catalog"
 
 if grep -Fq 'After=multi-user.target' "$boot_service"; then
   printf 'Boot marker must not order itself after multi-user.target.\n' >&2

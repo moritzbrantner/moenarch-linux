@@ -4,7 +4,14 @@ set -euo pipefail
 serial_device="${MOENARCH_INSTALLED_BOOT_MARKER_TTY:-/dev/ttyS0}"
 [[ -w "$serial_device" ]] || exit 0
 
+moenarch-projects validate-catalog >/dev/null
+all_projects="$(moenarch-projects list all | wc -l)"
+default_projects="$(moenarch-projects list default | wc -l)"
+((all_projects >= 40))
+((default_projects >= 10))
+
 {
   printf 'MOENARCH_INSTALLED_BOOT_OK\n'
+  printf 'MOENARCH_PROJECTS_READY all=%s default=%s\n' "$all_projects" "$default_projects"
   cat /etc/os-release
 } >"$serial_device"

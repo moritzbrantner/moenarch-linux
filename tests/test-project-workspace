@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+project_tool="$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-projects"
+runtime_dir="$(mktemp -d "${TMPDIR:-/tmp}/moenarch-projects.XXXXXX")"
+
+cleanup() {
+  rm -rf -- "$runtime_dir"
+}
+trap cleanup EXIT
+
+remote_root="$runtime_dir/remotes"
+source_root="$runtime_dir/source"
+workspace="$runtime_dir/workspace"
+catalog="$runtime_dir/projects.lock.tsv"
+mkdir -p -- "$remote_root/fixture" "$source_root"
+
+create_fixture_repo() {
+  local name="$1"
+  local source="$source_root/$name"
+  local bare="$remote_root/fixture/$name.git"
+
+  mkdir -p -- "$source"
+  git -C "$source" init -q
+  git -C "$source" config user.name 'Moenarch Test'
+  git -C "$source" config user.email 'moenarch-test@example.invalid'
+  printf '%s\n' "$name" >"$source/README.txt"
+  git -C "$source" add README.txt
+  git -C "$source" commit -q -m "Create $name fixture"
+  git clone --quiet --bare "$source" "$bare"
+  git -C "$source" rev-parse HEAD
+}
+
+alpha_revision="$(create_fixture_repo alpha)"
+beta_revision="$(create_fixture_repo beta)"
+
+cat >"$catalog" <<EOF
+# schema=1
+# name	repository	revision	groups
+alpha	fixture/alpha	$alpha_revision	foundation,default
+beta	fixture/beta	$beta_revision	spatial
+EOF
+
+run_tool() {
+  MOENARCH_PROJECT_CATALOG="$catalog" \
+    MOENARCH_PROJECT_BASE_URL="file://$remote_root" \
+    bash "$project_tool" "$@"
+}
+
+run_tool validate-catalog | grep -Fxq $'catalog-ok\t2'
+[[ "$(run_tool list default | wc -l)" -eq 1 ]]
+[[ "$(run_tool list all | wc -l)" -eq 2 ]]
+
+first_result="$(run_tool bootstrap default "$workspace")"
+grep -Fxq "changed"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$first_result"
+[[ "$(git -C "$workspace/alpha" rev-parse HEAD)" == "$alpha_revision" ]]
+
+second_result="$(run_tool bootstrap default "$workspace")"
+grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$second_result"
+
+printf 'local edit\n' >>"$workspace/alpha/README.txt"
+if run_tool bootstrap default "$workspace" >"$runtime_dir/conflict.out" 2>"$runtime_dir/conflict.err"; then
+  printf 'Bootstrap unexpectedly overwrote a modified checkout.\n' >&2
+  exit 1
+fi
+grep -Fq $'conflict\talpha\tmodified' "$runtime_dir/conflict.err"
+grep -Fxq 'local edit' "$workspace/alpha/README.txt" || {
+  printf 'Modified checkout lost its local change.\n' >&2
+  exit 1
+}
+git -C "$workspace/alpha" checkout -q -- README.txt
+
+all_result="$(run_tool bootstrap all "$workspace")"
+grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$all_result"
+grep -Fxq "changed"$'\t'"beta"$'\t'"$beta_revision" <<<"$all_result"
+[[ "$(git -C "$workspace/beta" rev-parse HEAD)" == "$beta_revision" ]]
+
+echo 'Moenarch project-workspace reconciliation tests succeeded.'
