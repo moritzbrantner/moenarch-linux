@@ -143,6 +143,38 @@ if compgen -G "$workspace/.moenarch-staging-*" >/dev/null; then
 fi
 rm -f -- "$workspace/beta"
 
+for unsafe_workspace in / /tmp/.. /./ "$runtime_dir/root-link"; do
+  [[ "$unsafe_workspace" == "$runtime_dir/root-link" ]] && ln -sfn / "$unsafe_workspace"
+  if run_tool status spatial "$unsafe_workspace" >/dev/null 2>"$runtime_dir/unsafe.err"; then
+    printf 'Workspace alias of / was accepted: %s\n' "$unsafe_workspace" >&2
+    exit 1
+  fi
+  grep -Fq 'Refusing unsafe workspace path' "$runtime_dir/unsafe.err"
+done
+
+# Terminate bootstrap while git clones; the staging directory must not remain.
+cat >"$racing_bin/git" <<EOS
+#!/usr/bin/env bash
+if [[ "\$1" == clone ]]; then
+  "$real_git" "\$@" || exit
+  kill -TERM "\$PPID"
+  exit 0
+fi
+exec "$real_git" "\$@"
+EOS
+if PATH="$racing_bin:$PATH" run_tool bootstrap spatial "$workspace" >/dev/null 2>&1; then
+  printf 'Bootstrap unexpectedly succeeded after SIGTERM.\n' >&2
+  exit 1
+fi
+if compgen -G "$workspace/.moenarch-staging-*" >/dev/null; then
+  printf 'Terminated bootstrap left a staging directory behind.\n' >&2
+  exit 1
+fi
+[[ ! -e "$workspace/beta" ]] || {
+  printf 'Terminated bootstrap left a partial project checkout.\n' >&2
+  exit 1
+}
+
 all_result="$(run_tool bootstrap all "$workspace")"
 grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$all_result"
 grep -Fxq "changed"$'\t'"beta"$'\t'"$beta_revision" <<<"$all_result"

@@ -169,7 +169,9 @@ checkout_state() {
 validate_workspace() {
   local workspace="$1"
 
-  [[ -n "$workspace" && "$workspace" != "/" ]] || {
+  # Compare the canonical path so aliases such as /tmp/.. or a symlink to /
+  # cannot bypass the root-filesystem guard.
+  [[ -n "$workspace" && "$(realpath -m -- "$workspace")" != "/" ]] || {
     printf 'Refusing unsafe workspace path: %s\n' "$workspace" >&2
     return 1
   }
@@ -193,6 +195,19 @@ show_status() {
   done <"$catalog"
 }
 
+# Staging directory owned by the clone in progress, removed if bootstrap is
+# interrupted or terminated before the clone is renamed into place.
+active_staging=""
+
+remove_active_staging() {
+  [[ -n "$active_staging" ]] && rm -rf -- "$active_staging"
+  active_staging=""
+}
+
+trap remove_active_staging EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 clone_locked_project() {
   local name="$1"
   local repository="$2"
@@ -209,12 +224,14 @@ clone_locked_project() {
   # without replacing anything. Cleanup only ever touches the staging
   # directory, so a path that appears at the target in the meantime survives.
   staging="$(mktemp -d "$workspace/.moenarch-staging-$name.XXXXXX")" || return 1
+  active_staging="$staging"
   checkout="$staging/checkout"
 
   if ! git clone "${clone_options[@]}" "$remote" "$checkout" ||
     ! git -C "$checkout" -c advice.detachedHead=false checkout --quiet --detach "$revision" ||
     [[ "$(git -C "$checkout" rev-parse HEAD)" != "$revision" ]]; then
     rm -rf -- "$staging"
+    active_staging=""
     return 1
   fi
 
@@ -222,9 +239,11 @@ clone_locked_project() {
   if [[ -e "$checkout" ]]; then
     printf 'Project path appeared during bootstrap; leaving it untouched: %s\n' "$target" >&2
     rm -rf -- "$staging"
+    active_staging=""
     return 1
   fi
   rmdir -- "$staging"
+  active_staging=""
 }
 
 bootstrap_projects() {
