@@ -114,8 +114,14 @@ checkout_state() {
   local revision="$3"
   local actual_remote actual_revision
 
-  [[ -d "$target" ]] || {
+  # Any existing path, including regular files and broken symlinks, belongs to
+  # the user. Only a path that does not exist at all may be cloned into.
+  [[ -e "$target" || -L "$target" ]] || {
     printf 'missing'
+    return 0
+  }
+  [[ -d "$target" ]] || {
+    printf 'conflict:not-git'
     return 0
   }
   git -C "$target" rev-parse --is-inside-work-tree >/dev/null 2>&1 || {

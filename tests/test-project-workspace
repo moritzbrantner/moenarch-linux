@@ -71,6 +71,30 @@ grep -Fxq 'local edit' "$workspace/alpha/README.txt" || {
 }
 git -C "$workspace/alpha" checkout -q -- README.txt
 
+printf 'user data\n' >"$workspace/beta"
+if run_tool bootstrap spatial "$workspace" >"$runtime_dir/file.out" 2>"$runtime_dir/file.err"; then
+  printf 'Bootstrap unexpectedly replaced a non-directory project path.\n' >&2
+  exit 1
+fi
+grep -Fq $'conflict\tbeta\tnot-git' "$runtime_dir/file.err"
+grep -Fxq 'user data' "$workspace/beta" || {
+  printf 'Existing non-directory project path lost its contents.\n' >&2
+  exit 1
+}
+rm -f -- "$workspace/beta"
+
+ln -s "$runtime_dir/does-not-exist" "$workspace/beta"
+if run_tool bootstrap spatial "$workspace" >"$runtime_dir/link.out" 2>"$runtime_dir/link.err"; then
+  printf 'Bootstrap unexpectedly replaced a broken project symlink.\n' >&2
+  exit 1
+fi
+grep -Fq $'conflict\tbeta\tnot-git' "$runtime_dir/link.err"
+[[ -L "$workspace/beta" ]] || {
+  printf 'Existing broken project symlink was removed.\n' >&2
+  exit 1
+}
+rm -f -- "$workspace/beta"
+
 all_result="$(run_tool bootstrap all "$workspace")"
 grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$all_result"
 grep -Fxq "changed"$'\t'"beta"$'\t'"$beta_revision" <<<"$all_result"
