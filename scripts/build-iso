@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+out_dir="${MOENARCH_OUT_DIR:-$repo_root/out}"
+work_dir="${MOENARCH_WORK_DIR:-$repo_root/.build/work}"
+
+command -v mkarchiso >/dev/null 2>&1 || {
+  printf 'mkarchiso is required. Install the Arch Linux archiso package.\n' >&2
+  exit 1
+}
+
+if [[ -z "${SOURCE_DATE_EPOCH:-}" ]]; then
+  if command -v git >/dev/null 2>&1 && git -C "$repo_root" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    SOURCE_DATE_EPOCH="$(git -C "$repo_root" log -1 --format=%ct)"
+  else
+    SOURCE_DATE_EPOCH="$(date +%s)"
+  fi
+  export SOURCE_DATE_EPOCH
+fi
+
+profile="$("$repo_root/scripts/prepare-profile")"
+rm -rf -- "$work_dir"
+mkdir -p -- "$out_dir"
+rm -f -- "$out_dir"/moenarch-linux-*.iso "$out_dir/SHA256SUMS" "$out_dir/build-manifest.txt"
+
+mkarchiso -v -r -w "$work_dir" -o "$out_dir" "$profile"
+
+mapfile -t images < <(find "$out_dir" -maxdepth 1 -type f -name 'moenarch-linux-*.iso' -print | sort)
+if [[ "${#images[@]}" -ne 1 ]]; then
+  printf 'Expected exactly one Moenarch ISO, found %d.\n' "${#images[@]}" >&2
+  exit 1
+fi
+
+image="${images[0]}"
+(
+  cd -- "$out_dir"
+  sha256sum "$(basename -- "$image")" >SHA256SUMS
+)
+
+archiso_version="$(pacman -Q archiso 2>/dev/null || printf 'archiso unknown')"
+git_revision="$(git -C "$repo_root" rev-parse HEAD 2>/dev/null || printf 'unknown')"
+{
+  printf 'git_revision=%s\n' "$git_revision"
+  printf 'source_date_epoch=%s\n' "$SOURCE_DATE_EPOCH"
+  printf 'archiso=%s\n' "$archiso_version"
+  printf 'profile=%s\n' "$profile"
+  printf 'image=%s\n' "$(basename -- "$image")"
+} >"$out_dir/build-manifest.txt"
+
+printf 'Built %s\n' "$image"

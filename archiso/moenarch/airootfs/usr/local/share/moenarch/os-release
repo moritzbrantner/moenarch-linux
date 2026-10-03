@@ -1,0 +1,11 @@
+NAME="Moenarch Linux"
+PRETTY_NAME="Moenarch Linux"
+ID=moenarch
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://github.com/moritzbrantner/moenarch-linux"
+DOCUMENTATION_URL="https://github.com/moritzbrantner/moenarch-linux/tree/main/docs"
+SUPPORT_URL="https://github.com/moritzbrantner/moenarch-linux/issues"
+BUG_REPORT_URL="https://github.com/moritzbrantner/moenarch-linux/issues"
+LOGO=moenarch-logo
