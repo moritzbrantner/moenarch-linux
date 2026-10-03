@@ -14,18 +14,27 @@
 - Configure bootloader, locale, user, networking, and release identity.
 - Reboot from disk and verify the installed system independently of the live image.
 
-## Milestone 3 — Declarative profiles
+## Milestone 3 — Integrated developer workspace
+
+- Ship a machine-readable catalog of exact revisions for the broader project landscape.
+- Make the catalog and `moenarch-projects` available on the live image and every new installation.
+- Reconcile missing source checkouts idempotently while treating local edits, remote drift, and revision drift as conflicts rather than overwriting them.
+- Keep project-specific toolchains, dependency setup, builds, tests, and runtime behavior under each repository's authority.
+- Extend the catalog deliberately as cross-project ownership seams become stable.
+
+## Milestone 4 — Declarative system profiles
 
 - Define `base`, `desktop`, `developer`, and `server` as composable package/service policies.
 - Keep one distribution and one installer rather than separate editions.
 - Add machine-readable profile validation.
+- Let the developer profile select project-workspace groups without making source acquisition an implicit OS build step.
 
-## Milestone 4 — Moenarch packages
+## Milestone 5 — Moenarch packages
 
 - Introduce signed Moenarch package repository infrastructure only for software Moenarch owns.
 - Package release identity, installer, CLI, and verification tooling.
 
-## Milestone 5 — Rust system tooling
+## Milestone 6 — Rust system tooling
 
 - Add a small Rust CLI for installer orchestration, diagnostics, verification, and reconciliation.
 - Keep ownership boundaries explicit: Moenarch composes Arch unless a justified divergence is required.

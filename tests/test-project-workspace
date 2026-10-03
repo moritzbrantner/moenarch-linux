@@ -1,0 +1,183 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+project_tool="$repo_root/archiso/moenarch/airootfs/usr/local/bin/moenarch-projects"
+runtime_dir="$(mktemp -d "${TMPDIR:-/tmp}/moenarch-projects.XXXXXX")"
+
+cleanup() {
+  rm -rf -- "$runtime_dir"
+}
+trap cleanup EXIT
+
+remote_root="$runtime_dir/remotes"
+source_root="$runtime_dir/source"
+workspace="$runtime_dir/workspace"
+catalog="$runtime_dir/projects.lock.tsv"
+mkdir -p -- "$remote_root/fixture" "$source_root"
+
+create_fixture_repo() {
+  local name="$1"
+  local source="$source_root/$name"
+  local bare="$remote_root/fixture/$name.git"
+
+  mkdir -p -- "$source"
+  git -C "$source" init -q
+  git -C "$source" config user.name 'Moenarch Test'
+  git -C "$source" config user.email 'moenarch-test@example.invalid'
+  printf '%s\n' "$name" >"$source/README.txt"
+  git -C "$source" add README.txt
+  git -C "$source" commit -q -m "Create $name fixture"
+  git clone --quiet --bare "$source" "$bare"
+  git -C "$source" rev-parse HEAD
+}
+
+alpha_revision="$(create_fixture_repo alpha)"
+beta_revision="$(create_fixture_repo beta)"
+
+cat >"$catalog" <<EOF
+# schema=1
+# name	repository	revision	groups
+alpha	fixture/alpha	$alpha_revision	foundation,default
+beta	fixture/beta	$beta_revision	spatial
+EOF
+
+run_tool() {
+  MOENARCH_PROJECT_CATALOG="$catalog" \
+    MOENARCH_PROJECT_BASE_URL="file://$remote_root" \
+    bash "$project_tool" "$@"
+}
+
+run_tool validate-catalog | grep -Fxq $'catalog-ok\t2'
+[[ "$(run_tool list default | wc -l)" -eq 1 ]]
+[[ "$(run_tool list all | wc -l)" -eq 2 ]]
+
+first_result="$(run_tool bootstrap default "$workspace")"
+grep -Fxq "changed"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$first_result"
+[[ "$(git -C "$workspace/alpha" rev-parse HEAD)" == "$alpha_revision" ]]
+
+second_result="$(run_tool bootstrap default "$workspace")"
+grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$second_result"
+
+printf 'local edit\n' >>"$workspace/alpha/README.txt"
+if run_tool bootstrap default "$workspace" >"$runtime_dir/conflict.out" 2>"$runtime_dir/conflict.err"; then
+  printf 'Bootstrap unexpectedly overwrote a modified checkout.\n' >&2
+  exit 1
+fi
+grep -Fq $'conflict\talpha\tmodified' "$runtime_dir/conflict.err"
+grep -Fxq 'local edit' "$workspace/alpha/README.txt" || {
+  printf 'Modified checkout lost its local change.\n' >&2
+  exit 1
+}
+git -C "$workspace/alpha" checkout -q -- README.txt
+
+printf 'user data\n' >"$workspace/beta"
+if run_tool bootstrap spatial "$workspace" >"$runtime_dir/file.out" 2>"$runtime_dir/file.err"; then
+  printf 'Bootstrap unexpectedly replaced a non-directory project path.\n' >&2
+  exit 1
+fi
+grep -Fq $'conflict\tbeta\tnot-git' "$runtime_dir/file.err"
+grep -Fxq 'user data' "$workspace/beta" || {
+  printf 'Existing non-directory project path lost its contents.\n' >&2
+  exit 1
+}
+rm -f -- "$workspace/beta"
+
+ln -s "$runtime_dir/does-not-exist" "$workspace/beta"
+if run_tool bootstrap spatial "$workspace" >"$runtime_dir/link.out" 2>"$runtime_dir/link.err"; then
+  printf 'Bootstrap unexpectedly replaced a broken project symlink.\n' >&2
+  exit 1
+fi
+grep -Fq $'conflict\tbeta\tnot-git' "$runtime_dir/link.err"
+[[ -L "$workspace/beta" ]] || {
+  printf 'Existing broken project symlink was removed.\n' >&2
+  exit 1
+}
+rm -f -- "$workspace/beta"
+
+git -C "$workspace" init -q
+git -C "$workspace" remote add origin "file://$remote_root/fixture/beta.git"
+git -C "$workspace" fetch -q origin
+git -C "$workspace" -c advice.detachedHead=false checkout -q --detach "$beta_revision"
+mkdir -p -- "$workspace/beta"
+nested_status="$(run_tool status spatial "$workspace")"
+grep -Fxq "conflict:not-git"$'\t'"beta"$'\t'"$beta_revision" <<<"$nested_status" || {
+  printf 'A plain directory inside another checkout was reported as a locked project.\n' >&2
+  exit 1
+}
+rm -rf -- "$workspace/.git" "$workspace/beta" "$workspace/README.txt"
+
+if run_tool bootstrap defualt "$workspace" >"$runtime_dir/group.out" 2>"$runtime_dir/group.err"; then
+  printf 'Bootstrap unexpectedly accepted an unknown project group.\n' >&2
+  exit 1
+fi
+grep -Fxq 'Unknown project group: defualt' "$runtime_dir/group.err"
+if run_tool status defualt "$workspace" >/dev/null 2>&1; then
+  printf 'Status unexpectedly accepted an unknown project group.\n' >&2
+  exit 1
+fi
+
+# Simulate another process creating the project path while git clones.
+real_git="$(command -v git)"
+racing_bin="$runtime_dir/racing-bin"
+mkdir -p -- "$racing_bin"
+cat >"$racing_bin/git" <<EOS
+#!/usr/bin/env bash
+if [[ "\$1" == clone ]]; then
+  printf 'raced user data\\n' >"$workspace/beta"
+fi
+exec "$real_git" "\$@"
+EOS
+chmod +x "$racing_bin/git"
+if PATH="$racing_bin:$PATH" run_tool bootstrap spatial "$workspace" >"$runtime_dir/race.out" 2>"$runtime_dir/race.err"; then
+  printf 'Bootstrap unexpectedly replaced a path created during clone.\n' >&2
+  exit 1
+fi
+grep -Fxq 'raced user data' "$workspace/beta" || {
+  printf 'Path created during clone lost its contents.\n' >&2
+  exit 1
+}
+if compgen -G "$workspace/.moenarch-staging-*" >/dev/null; then
+  printf 'Bootstrap left a staging directory behind.\n' >&2
+  exit 1
+fi
+rm -f -- "$workspace/beta"
+
+for unsafe_workspace in / /tmp/.. /./ "$runtime_dir/root-link"; do
+  [[ "$unsafe_workspace" == "$runtime_dir/root-link" ]] && ln -sfn / "$unsafe_workspace"
+  if run_tool status spatial "$unsafe_workspace" >/dev/null 2>"$runtime_dir/unsafe.err"; then
+    printf 'Workspace alias of / was accepted: %s\n' "$unsafe_workspace" >&2
+    exit 1
+  fi
+  grep -Fq 'Refusing unsafe workspace path' "$runtime_dir/unsafe.err"
+done
+
+# Terminate bootstrap while git clones; the staging directory must not remain.
+cat >"$racing_bin/git" <<EOS
+#!/usr/bin/env bash
+if [[ "\$1" == clone ]]; then
+  "$real_git" "\$@" || exit
+  kill -TERM "\$PPID"
+  exit 0
+fi
+exec "$real_git" "\$@"
+EOS
+if PATH="$racing_bin:$PATH" run_tool bootstrap spatial "$workspace" >/dev/null 2>&1; then
+  printf 'Bootstrap unexpectedly succeeded after SIGTERM.\n' >&2
+  exit 1
+fi
+if compgen -G "$workspace/.moenarch-staging-*" >/dev/null; then
+  printf 'Terminated bootstrap left a staging directory behind.\n' >&2
+  exit 1
+fi
+[[ ! -e "$workspace/beta" ]] || {
+  printf 'Terminated bootstrap left a partial project checkout.\n' >&2
+  exit 1
+}
+
+all_result="$(run_tool bootstrap all "$workspace")"
+grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$all_result"
+grep -Fxq "changed"$'\t'"beta"$'\t'"$beta_revision" <<<"$all_result"
+[[ "$(git -C "$workspace/beta" rev-parse HEAD)" == "$beta_revision" ]]
+
+echo 'Moenarch project-workspace reconciliation tests succeeded.'
