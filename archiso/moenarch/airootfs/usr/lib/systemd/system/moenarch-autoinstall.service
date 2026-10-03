@@ -1,6 +1,10 @@
 [Unit]
 Description=Run Moenarch automated installation acceptance harness
 ConditionKernelCommandLine=moenarch.autoinstall=1
+# pacstrap authenticates packages against the live keyring, which Archiso's
+# pacman-init.service creates and populates after boot.
+Requires=pacman-init.service
+After=pacman-init.service
 Wants=network-online.target
 After=network-online.target
 

@@ -33,6 +33,11 @@ grep -Fxq 'When = PostTransaction' "$hook"
 grep -Fq 'remove from airootfs!' "$hook"
 
 grep -Fxq 'ConditionKernelCommandLine=moenarch.autoinstall=1' "$autoinstall_service"
+if ! grep -Fxq 'Requires=pacman-init.service' "$autoinstall_service" ||
+  ! grep -Fxq 'After=pacman-init.service' "$autoinstall_service"; then
+  printf 'Autoinstall must wait for the live pacman keyring to be initialized.\n' >&2
+  exit 1
+fi
 grep -Fq "cmdline_has 'moenarch.autoinstall=1'" "$autoinstall"
 grep -Fq 'explicit moenarch.autoinstall=1 is required' "$autoinstall"
 grep -Fq 'moenarch.install_device' "$autoinstall"
