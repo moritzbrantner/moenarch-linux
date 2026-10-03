@@ -95,12 +95,23 @@ list_projects() {
   local name repository revision groups
 
   validate_catalog >/dev/null
+  require_known_group "$requested"
   while IFS=$'\t' read -r name repository revision groups; do
     [[ -z "$name" || "$name" == \#* ]] && continue
     if group_matches "$groups" "$requested"; then
       printf '%s\t%s\t%s\t%s\n' "$name" "$repository" "$revision" "$groups"
     fi
   done <"$catalog"
+}
+
+require_known_group() {
+  local requested="$1"
+
+  [[ "$requested" == "all" ]] && return 0
+  show_groups | grep -Fxq -- "$requested" || {
+    printf 'Unknown project group: %s\n' "$requested" >&2
+    return 1
+  }
 }
 
 expected_remote() {
@@ -125,6 +136,12 @@ checkout_state() {
     return 0
   }
   git -C "$target" rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+    printf 'conflict:not-git'
+    return 0
+  }
+  # A plain directory nested in another checkout would otherwise inherit the
+  # ancestor repository; only accept the target when it is the worktree root.
+  [[ "$(git -C "$target" rev-parse --show-toplevel 2>/dev/null)" == "$(cd -- "$target" && pwd -P)" ]] || {
     printf 'conflict:not-git'
     return 0
   }
@@ -163,6 +180,7 @@ show_status() {
   local workspace="$2"
   local name repository revision groups remote target state
 
+  require_known_group "$requested"
   validate_workspace "$workspace"
   while IFS=$'\t' read -r name repository revision groups; do
     [[ -z "$name" || "$name" == \#* ]] && continue
@@ -215,6 +233,7 @@ bootstrap_projects() {
   local conflicts=0
 
   validate_catalog >/dev/null
+  require_known_group "$requested"
   validate_workspace "$workspace"
   command -v git >/dev/null 2>&1 || {
     printf 'git is required to bootstrap project sources.\n' >&2

@@ -95,6 +95,28 @@ grep -Fq $'conflict\tbeta\tnot-git' "$runtime_dir/link.err"
 }
 rm -f -- "$workspace/beta"
 
+git -C "$workspace" init -q
+git -C "$workspace" remote add origin "file://$remote_root/fixture/beta.git"
+git -C "$workspace" fetch -q origin
+git -C "$workspace" -c advice.detachedHead=false checkout -q --detach "$beta_revision"
+mkdir -p -- "$workspace/beta"
+nested_status="$(run_tool status spatial "$workspace")"
+grep -Fxq "conflict:not-git"$'\t'"beta"$'\t'"$beta_revision" <<<"$nested_status" || {
+  printf 'A plain directory inside another checkout was reported as a locked project.\n' >&2
+  exit 1
+}
+rm -rf -- "$workspace/.git" "$workspace/beta" "$workspace/README.txt"
+
+if run_tool bootstrap defualt "$workspace" >"$runtime_dir/group.out" 2>"$runtime_dir/group.err"; then
+  printf 'Bootstrap unexpectedly accepted an unknown project group.\n' >&2
+  exit 1
+fi
+grep -Fxq 'Unknown project group: defualt' "$runtime_dir/group.err"
+if run_tool status defualt "$workspace" >/dev/null 2>&1; then
+  printf 'Status unexpectedly accepted an unknown project group.\n' >&2
+  exit 1
+fi
+
 all_result="$(run_tool bootstrap all "$workspace")"
 grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$all_result"
 grep -Fxq "changed"$'\t'"beta"$'\t'"$beta_revision" <<<"$all_result"
