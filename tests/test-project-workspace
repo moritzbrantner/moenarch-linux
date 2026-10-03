@@ -117,6 +117,32 @@ if run_tool status defualt "$workspace" >/dev/null 2>&1; then
   exit 1
 fi
 
+# Simulate another process creating the project path while git clones.
+real_git="$(command -v git)"
+racing_bin="$runtime_dir/racing-bin"
+mkdir -p -- "$racing_bin"
+cat >"$racing_bin/git" <<EOS
+#!/usr/bin/env bash
+if [[ "\$1" == clone ]]; then
+  printf 'raced user data\\n' >"$workspace/beta"
+fi
+exec "$real_git" "\$@"
+EOS
+chmod +x "$racing_bin/git"
+if PATH="$racing_bin:$PATH" run_tool bootstrap spatial "$workspace" >"$runtime_dir/race.out" 2>"$runtime_dir/race.err"; then
+  printf 'Bootstrap unexpectedly replaced a path created during clone.\n' >&2
+  exit 1
+fi
+grep -Fxq 'raced user data' "$workspace/beta" || {
+  printf 'Path created during clone lost its contents.\n' >&2
+  exit 1
+}
+if compgen -G "$workspace/.moenarch-staging-*" >/dev/null; then
+  printf 'Bootstrap left a staging directory behind.\n' >&2
+  exit 1
+fi
+rm -f -- "$workspace/beta"
+
 all_result="$(run_tool bootstrap all "$workspace")"
 grep -Fxq "unchanged"$'\t'"alpha"$'\t'"$alpha_revision" <<<"$all_result"
 grep -Fxq "changed"$'\t'"beta"$'\t'"$beta_revision" <<<"$all_result"

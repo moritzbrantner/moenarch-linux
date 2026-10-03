@@ -198,32 +198,33 @@ clone_locked_project() {
   local repository="$2"
   local revision="$3"
   local workspace="$4"
-  local remote target
+  local remote target staging checkout
+  local -a clone_options=(--no-checkout --quiet)
 
   remote="$(expected_remote "$repository")"
   target="$workspace/$name"
+  [[ "$base_url" == file://* ]] || clone_options+=(--filter=blob:none)
 
-  if [[ "$base_url" == file://* ]]; then
-    if ! git clone --no-checkout --quiet "$remote" "$target"; then
-      [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
-      return 1
-    fi
-  else
-    if ! git clone --filter=blob:none --no-checkout --quiet "$remote" "$target"; then
-      [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
-      return 1
-    fi
-  fi
+  # Clone into a directory this invocation owns, then rename it into place
+  # without replacing anything. Cleanup only ever touches the staging
+  # directory, so a path that appears at the target in the meantime survives.
+  staging="$(mktemp -d "$workspace/.moenarch-staging-$name.XXXXXX")" || return 1
+  checkout="$staging/checkout"
 
-  if ! git -C "$target" -c advice.detachedHead=false checkout --quiet --detach "$revision"; then
-    [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
+  if ! git clone "${clone_options[@]}" "$remote" "$checkout" ||
+    ! git -C "$checkout" -c advice.detachedHead=false checkout --quiet --detach "$revision" ||
+    [[ "$(git -C "$checkout" rev-parse HEAD)" != "$revision" ]]; then
+    rm -rf -- "$staging"
     return 1
   fi
 
-  [[ "$(git -C "$target" rev-parse HEAD)" == "$revision" ]] || {
-    [[ "$target" == "$workspace/"* && "$target" != "$workspace" ]] && rm -rf -- "$target"
+  mv --no-clobber --no-target-directory -- "$checkout" "$target" 2>/dev/null || true
+  if [[ -e "$checkout" ]]; then
+    printf 'Project path appeared during bootstrap; leaving it untouched: %s\n' "$target" >&2
+    rm -rf -- "$staging"
     return 1
-  }
+  fi
+  rmdir -- "$staging"
 }
 
 bootstrap_projects() {
