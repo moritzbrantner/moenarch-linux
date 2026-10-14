@@ -6,7 +6,7 @@ The first user-facing milestone is the **quality and usability of the desktop it
 
 ## First product milestone — A dignified Catholic-contextual desktop
 
-- Boot installation media into a usable **KDE Plasma live desktop** to explore the system and check hardware before committing to installation; a visible **Install Moenarch** action starts a guided graphical installer on request (Decision 4.2). Simply booting or browsing the live system must not alter disks. The remaining offline/network installation requirement is open in Question 4.3.
+- Boot installation media into a usable **KDE Plasma live desktop** to explore the system and check hardware before committing to installation; a visible **Install Moenarch** action starts a guided graphical installer on request (Decision 4.2). Simply booting or browsing the live system must not alter disks. The standard KDE Plasma installation must also complete entirely **offline** from media containing the required packages, followed by a successful offline boot from the installed disk (Decision 4.4).
 - Install and use **KDE Plasma** as the integrated graphical desktop (Decision 3.4), configured with a **familiar, mouse-first experience**: conventional panels and menus, overlapping windows, and discoverable application access and settings. Ordinary tasks must not require memorized keyboard shortcuts or automatic tiling (Decision 3.2).
 - Present a **warm, classical Catholic visual identity** through restrained sacred-art, architectural and typographic influences (Decision 3.6) alongside accent colors automatically reflecting the **current General Roman Calendar** (Decisions 2.5 and 2.7). Keep normal interface controls legible, usable and free from excessive ornamentation; do not require devotional applications.
 - Show **Sunday first** in the desktop calendar and use **AD/BC** where Moenarch-controlled date displays render explicit era names.
@@ -26,7 +26,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 
 ### Stage 2 — Automated installation
 
-- Retain the existing explicit-opt-in, test-only installation proof. The approved first-use experience calls for a separate **guided graphical installer launched from the live Plasma desktop**, not an automatically executed disk write (Decision 4.2).
+- Retain the existing explicit-opt-in, test-only installation proof. The approved first-use experience calls for a separate **guided graphical installer launched from the live Plasma desktop**, not an automatically executed disk write (Decision 4.2). Include everything needed for the standard KDE Plasma installation on the USB image; build and verify the normal user-facing installation with networking disabled (Decision 4.4).
 - Partition a blank virtual disk.
 - Install a minimal Moenarch system using standard Arch installation primitives.
 - Configure bootloader, locale, user, networking, and release identity.
