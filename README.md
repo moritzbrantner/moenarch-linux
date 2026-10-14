@@ -10,6 +10,10 @@ The [Decision Atlas](docs/DECISION-ATLAS.md) records approved product direction 
 
 Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first windows, menus, and settings, and a restrained, warm **classical Catholic visual identity**: subtle accent colors that follow the Catholic liturgical day or season automatically, calendars starting on Sunday, and AD/BC era labels rather than CE/BCE. Its everyday experience should respect the dignity of the human soul. More explicitly Christian applications can follow later. See the [Decision Atlas](docs/DECISION-ATLAS.md) for approved direction and open details.
 
+## Try before installing
+
+Boot the installation media into a working live KDE Plasma desktop to explore Moenarch and check hardware before making changes to disk. Start a guided graphical installation explicitly through **Install Moenarch**; the desktop itself must not start installation automatically (Decision 4.2). Whether full installation can complete offline remains an open product question.
+
 ## Engineering foundation
 
 1. Build a bootable Moenarch Linux ISO from Archiso's `releng` profile.
