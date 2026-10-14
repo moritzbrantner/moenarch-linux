@@ -124,8 +124,16 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   After installing Moenarch and booting from the disk, the normal default is a **graphical account login screen requiring the local user's password** before opening the KDE Plasma desktop, not automatic login. The guided installer must let the user set credentials for the account that will log in; installing and signing in must work **offline**. This is separate from disk encryption: under Decision 4.6 the system disk remains unencrypted by default, so account login does not protect the powered-off disk against offline data access. This choice does not determine session locking on suspend, multi-user account management, or whether users can subsequently opt into automatic login.
 
 - **4.9** [question] **Should the first public installer support installing alongside another operating system?**  
-  Unanswered.  
+  Answered 2026-10-15 by Decision 4.10 (option B); retained as the historical Question.  
   Should Moenarch offer a **guided dual-boot installation alongside an existing Windows or Linux system**, preserving that OS and its user data while safely managing partitions and boot selection (A), or initially require an **explicitly chosen dedicated installation disk/target**, with guided resizing and install-alongside support deferred (B)? Both must clearly identify the target and require informed confirmation before destructive disk writes (4.2); this choice materially changes the first-release installation journey, data-loss risks and validation scope.
+
+- **4.10 Dedicated installation disk for the first public release.**  
+  Status: owner-approved 2026-10-15. Answers 4.9 (option B).  
+  The first guided Moenarch installer requires the person to **explicitly select a dedicated target disk** for a fresh installation. **Guided resizing of existing partitions and automatic install-alongside/dual-boot configuration on a shared disk are deferred**; an existing Windows/Linux installation on the selected disk must not be treated as something the installer can preserve. Show identifiable disk details and the consequences of erasing the selected disk, then require informed, unmistakable confirmation before making **any destructive disk changes** (4.2). **Never silently choose a disk or change non-target disks**; reject missing, ambiguous or unsuitable target selections without writing. Existing operating systems on **other disks** must remain untouched; this does not prohibit their independent manual use. Both offline installer paths (4.4, 4.6), graphical account login (4.8), and the recoverable, personal-file-preserving disk layout (5.4, 5.6) still apply. The first release's QEMU acceptance must show that a separately attached populated non-target disk is unchanged.
+
+- **4.11** [question] **Should initial UEFI installations boot with Secure Boot enabled?**  
+  Unanswered.  
+  Should the initial Moenarch installer and installed desktop **A** work on UEFI systems with **Secure Boot enabled** using a correctly signed, maintainable boot chain, or **B** support ordinary UEFI boot but clearly require that Secure Boot be **disabled by the user** on machines where it prevents Moenarch booting, deferring signed-boot support? The alternatives materially change everyday installation friction, signing and boot-update maintenance. Neither choice approves silently changing firmware settings or claims real-PC compatibility based solely on QEMU testing.
 
 ## 5. Keeping the desktop updated
 
