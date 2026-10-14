@@ -60,7 +60,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 
 - Offer a discoverable, everyday **graphical way to find, install, launch and remove ordinary desktop applications** on the installed KDE Plasma system. Prefer **native packages from the Arch repositories** when an application is available through both Arch and Flatpak (Decision 6.2).
 - Identify each application's package source clearly. Use the existing Arch package manager for native installations rather than inventing another package-management authority; do not silently install a Flatpak in place of the preferred native package.
-- Verify an actual native application install, launch and removal from the installed desktop, plus consistent source preference when the same application has multiple available formats. Decision 6.2 does not require Flatpak support in the first implementation or approve AUR packages; AUR catalog visibility remains open in Question 6.3.
+- Verify an actual native application install, launch and removal from the installed desktop, plus consistent source preference when the same application has multiple available formats. **Exclude AUR entries and installation actions from the initial graphical catalog** (Decision 6.4); it must not misrepresent community AUR recipes as official Arch packages. Flatpak may remain available separately but is not required in the initial slice (Decision 6.2). The scope of preinstalled applications remains open in Question 6.5.
 
 ## Future product journeys
 
