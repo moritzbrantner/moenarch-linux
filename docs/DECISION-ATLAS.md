@@ -55,6 +55,10 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   Status: owner-approved 2026-10-14. Answers 2.4 (option A).  
   Subtle default desktop accents automatically reflect the current Catholic liturgical day or season. Keep the presentation restrained and legible. The calendar source, rite/locality scope, exact theme mechanics, and optional customization remain to be specified.
 
+- **2.6** [question] **Which Catholic liturgical calendar governs the default daily accents?**  
+  Unanswered.  
+  Should Moenarch follow the **current Roman Rite General Roman Calendar** by default, or the **traditional calendar associated with the 1962 Roman Missal**? The calendars can assign different observances and colors on the same date. This question selects the initial authoritative calendar, not whether other calendars or local observances could ever be supported.
+
 ## 3. Everyday desktop interaction
 
 - **3.1** [question] **What interaction model should the first desktop prioritize?**  
@@ -66,5 +70,9 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   The first Moenarch desktop should be approachable to an ordinary computer user without requiring Linux expertise or memorized keyboard shortcuts. Make familiar overlapping windows, discoverable application access, mouse interaction, conventional panels and menus, and understandable settings the **primary default experience**. Useful keyboard shortcuts and advanced window-management options may remain available, but automatic tiling must not be required or the default primary workflow. The owner explicitly selected this as the initial direction, without ruling out other desktop workflows later.
 
 - **3.3** [question] **Which established desktop experience should provide that familiar foundation?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 3.4 (option A); retained as the historical Question.  
   Should Moenarch build its initial user-facing experience around **KDE Plasma** (extensive customization and integrated system settings), **Cinnamon** (conservative conventional desktop workflow), or **GNOME** (streamlined, less traditional layout)? The important criterion is the real installed experience, including approachable defaults and subtle calendar-driven accents. This choice should not be confused with approval to build a bespoke desktop environment.
+
+- **3.4 KDE Plasma as the initial desktop foundation.**  
+  Status: owner-approved 2026-10-14. Answers 3.3 (option A).  
+  The initial graphical Moenarch desktop should use **KDE Plasma**, with a conventional mouse-first layout and discoverable application launcher, panels, overlapping windows and settings in accordance with Decision 3.2. Adapt and compose the established desktop instead of creating a new desktop environment. The user-selected Plasma foundation should support the subtle calendar-driven color accents and Sunday-first calendar defaults already approved; no particular KDE application bundle, display protocol or custom extension architecture is decided here.
