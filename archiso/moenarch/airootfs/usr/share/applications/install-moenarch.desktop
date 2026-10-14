@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Name=Install Moenarch
-Comment=Install Moenarch Linux to a dedicated disk (erases selected disk)
-Exec=pkexec /usr/bin/calamares
+Comment=Install to an explicitly selected dedicated disk (selected disk will be erased)
+Exec=/usr/local/bin/install-moenarch
 Icon=drive-harddisk
 Terminal=false
 Categories=System;

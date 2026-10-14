@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# UEFI-only installer until BIOS systemd-boot installation is supported.
+# Secure Boot enabled firmware is not yet a release-supported configuration.
+if [[ ! -d /sys/firmware/efi ]]; then
+  kdialog --error 'Moenarch installation currently requires UEFI boot. Reboot the installer USB in UEFI mode.'
+  exit 1
+fi
+exec pkexec /usr/bin/calamares

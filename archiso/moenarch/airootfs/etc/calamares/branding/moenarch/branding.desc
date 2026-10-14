@@ -1,0 +1,20 @@
+componentName: moenarch
+welcomeStyleCalamares: false
+windowExpanding: normal
+windowSize: 880px,580px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+strings:
+  productName: Moenarch Linux
+  shortProductName: Moenarch
+  version: Development
+  shortVersion: Dev
+  versionedName: Moenarch Linux
+  shortVersionedName: Moenarch
+  bootloaderEntryName: Moenarch Linux
+  productUrl: https://github.com/moritzbrantner/moenarch-linux
+  supportUrl: https://github.com/moritzbrantner/moenarch-linux/issues
+  knownIssuesUrl: https://github.com/moritzbrantner/moenarch-linux/issues
+  releaseNotesUrl: https://github.com/moritzbrantner/moenarch-linux
+  donateUrl: ""
