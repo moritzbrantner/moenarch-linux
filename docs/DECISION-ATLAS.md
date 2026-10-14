@@ -82,5 +82,15 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   The initial graphical Moenarch desktop should use **KDE Plasma**, with a conventional mouse-first layout and discoverable application launcher, panels, overlapping windows and settings in accordance with Decision 3.2. Adapt and compose the established desktop instead of creating a new desktop environment. The user-selected Plasma foundation should support the subtle calendar-driven color accents and Sunday-first calendar defaults already approved; no particular KDE application bundle, display protocol or custom extension architecture is decided here.
 
 - **3.5** [question] **What visual character should the default Plasma desktop have?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 3.6 (option B); retained as the historical Question.  
   Should Moenarch use a **clean contemporary desktop** whose Catholic identity appears primarily in its liturgical accent colors and conventions (A), or a **warm, classical Catholic visual style** with restrained traditional art, typography or motifs alongside those accents (B)? Both retain the approved accessible mouse-first layout and functional clarity; the choice concerns the desktop's visible character, not additional devotional apps.
+
+- **3.6 Classical Catholic visual identity for Plasma.**  
+  Status: owner-approved 2026-10-14. Answers 3.5 (option B).  
+  The default KDE Plasma desktop should have a **warm, classical Catholic visual character** rather than a purely contemporary/minimal appearance, with restrained inspiration from sacred art, traditional architecture, and appropriate typography or motifs. The result must remain polished, welcoming and legible for ordinary users, with a familiar mouse-first layout (3.2/3.4) and subtle liturgical accent colors (2.5/2.7). Do not turn the interface into ornate decoration that impedes tasks or require devotional applications for the identity to be visible. This decision selects the overall style, not particular artworks, fonts, licensed assets, wallpaper-selection behavior, or extra UI components.
+
+## 4. Installation and first use
+
+- **4.1** [question] **What should someone encounter first when booting Moenarch installation media?**  
+  Unanswered.  
+  Should the installation medium boot into a **usable live KDE Plasma desktop with an Install action** (try first, then install), or **launch a guided installer before the full desktop** (installation-first)? Both must eventually support a straightforward graphical installation; this is about the real first-use flow, boot resources, and whether the system can be tried before committing to installation.
