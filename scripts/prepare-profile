@@ -4,9 +4,14 @@ set -euo pipefail
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 source_profile="${ARCHISO_RELENG_PROFILE:-/usr/share/archiso/configs/releng}"
 target_profile="${MOENARCH_PROFILE_DIR:-$repo_root/.build/profile}"
+local_repo="${MOENARCH_LOCAL_REPO:-$repo_root/.build/localrepo}"
 
 if [[ ! -f "$source_profile/profiledef.sh" || ! -f "$source_profile/packages.x86_64" ]]; then
   printf 'Archiso releng profile not found at %s\n' "$source_profile" >&2
+  exit 1
+fi
+if [[ ! -f "$local_repo/moenarch-build.db" && ! -f "$local_repo/moenarch-build.db.tar.gz" ]]; then
+  printf 'Build-only Calamares repository missing: run scripts/build-calamares first.\n' >&2
   exit 1
 fi
 
@@ -23,4 +28,13 @@ while IFS= read -r package; do
 done <"$repo_root/archiso/moenarch/packages.add"
 
 sort -u -o "$target_profile/packages.x86_64" "$target_profile/packages.x86_64"
+
+# Use the build-time local repository ONLY while constructing the ISO.
+# finalize-installed-root reinstates the separately shipped native config.
+cat >>"$target_profile/pacman.conf" <<EOF
+
+[moenarch-build]
+SigLevel = Optional TrustAll
+Server = file://$local_repo
+EOF
 printf '%s\n' "$target_profile"

@@ -1,0 +1,17 @@
+--- a/src/modules/partition/gui/ChoicePage.cpp
++++ b/src/modules/partition/gui/ChoicePage.cpp
+@@ -1461,6 +1461,14 @@ ChoicePage::setupActions()
+         force_uncheck( m_grp, m_replaceButton );
+     }
+ 
++    // Moenarch Decision 4.10: whole-disk erase only; no partition
++    // replacement or resizing, even if existing partitions are detected.
++    // Do not mistake allowManualPartitioning=false for disabling these.
++    m_replaceButton->hide();
++    m_alongsideButton->hide();
++    force_uncheck( m_grp, m_replaceButton );
++    force_uncheck( m_grp, m_alongsideButton );
++
+     if ( m_somethingElseButton->isHidden() && m_alongsideButton->isHidden() && m_replaceButton->isHidden()
+          && m_eraseButton->isHidden() )
+     {

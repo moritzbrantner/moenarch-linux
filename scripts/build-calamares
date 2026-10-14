@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Build upstream Calamares once for an Archiso-only local pacman repository.
+set -euo pipefail
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+work="${MOENARCH_BUILD_DIR:-$repo_root/.build}/calamares"
+repo="${MOENARCH_LOCAL_REPO:-$repo_root/.build/localrepo}"
+
+if [[ "$(id -u)" -ne 0 ]]; then
+  printf 'Calamares package bootstrap requires root on an Arch host.\n' >&2
+  exit 1
+fi
+for command in pacman makepkg repo-add runuser; do
+  command -v "$command" >/dev/null || { echo "Missing $command" >&2; exit 1; }
+done
+
+# Explicit toolchain install; package building does not run makepkg as root.
+pacman -Syu --needed --noconfirm \
+  base-devel cmake extra-cmake-modules git ninja curl \
+  qt6-base qt6-declarative qt6-tools qt6-svg \
+  kconfig kcoreaddons kcrash ki18n kparts kpmcore kservice \
+  kwidgetsaddons polkit-qt6 solid yaml-cpp python python-pybind11
+
+mkdir -p -- "$work" "$repo"
+cp -- "$repo_root/packaging/calamares/"{PKGBUILD,whole-disk-only.patch} "$work/"
+if ! id -u moenarch-builder >/dev/null 2>&1; then
+  useradd -m --system --shell /bin/bash moenarch-builder
+fi
+chown -R moenarch-builder:moenarch-builder "$work"
+runuser -u moenarch-builder -- bash -c '
+  set -euo pipefail
+  cd "$1"
+  makepkg --noconfirm --nodeps --cleanbuild --force
+' _ "$work"
+
+shopt -s nullglob
+packages=("$work"/moenarch-calamares-*.pkg.tar.zst)
+if [[ "${#packages[@]}" -ne 1 ]]; then
+  printf 'Expected one local Calamares package, found %s\n' "${#packages[@]}" >&2
+  exit 1
+fi
+cp -- "${packages[0]}" "$repo/"
+(
+  cd "$repo"
+  repo-add --remove --quiet moenarch-build.db.tar.gz "$(basename -- "${packages[0]}")"
+)
+printf 'Calamares local repository prepared: %s\n' "$repo"
