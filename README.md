@@ -18,6 +18,10 @@ Boot the installation media into a working live KDE Plasma desktop to explore Mo
 
 The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2). Updates must establish a usable pre-update recovery point, with built-in recovery even if the normal graphical desktop cannot start (Decision 5.4). Restoring must revert broken system state while **preserving personal documents and files** (Decision 5.6). The recovery option is accessible without a working desktop, but **restoration requires explicit user confirmation** rather than an automatic rollback after failed boot (Decision 5.8).
 
+## Installing applications
+
+The intended graphical software experience prefers **native Arch repository packages** for desktop applications when both a native package and a Flatpak are available. Sources must be visible, and Flatpak is not forbidden; the initial AUR catalog policy is still undecided (Decision 6.2).
+
 ## Engineering foundation
 
 1. Build a bootable Moenarch Linux ISO from Archiso's `releng` profile.
