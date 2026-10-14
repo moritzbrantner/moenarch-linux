@@ -26,7 +26,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 
 ### Stage 2 — Automated installation
 
-- Retain the existing explicit-opt-in, test-only installation proof. The approved first-use experience calls for a separate **guided graphical installer launched from the live Plasma desktop**, not an automatically executed disk write (Decision 4.2). Include everything needed for the standard KDE Plasma installation on the USB image; build and verify the normal user-facing installation with networking disabled (Decision 4.4).
+- Retain the existing explicit-opt-in, test-only installation proof. The approved first-use experience calls for a separate **guided graphical installer launched from the live Plasma desktop**, not an automatically executed disk write (Decision 4.2). Include everything needed for the standard KDE Plasma installation on the USB image; build and verify the normal user-facing installation with networking disabled (Decision 4.4). **Unencrypted storage is preselected**, and users can explicitly opt into encryption after seeing the data-protection trade-off; independently verify both offline installation paths (Decision 4.6).
 - Partition a blank virtual disk.
 - Install a minimal Moenarch system using standard Arch installation primitives.
 - Configure bootloader, locale, user, networking, and release identity.
