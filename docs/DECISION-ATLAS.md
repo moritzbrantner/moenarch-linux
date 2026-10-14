@@ -35,5 +35,18 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
 ## 2. Practicing the faith through the desktop
 
 - **2.1** [question] **What should the first independently usable Catholic desktop experience accomplish?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 2.2: the owner explicitly prioritized the operating-system experience itself rather than any proposed app-first alternative. Retained as the historical Question.  
   Which user journey should be delivered first: **daily prayer and liturgical observance** (readings/prayers for the day), **Catholic study and source-grounded research** (finding and reading relevant Scripture/church texts), or **intentional computing and focus** (reducing distractions and supporting habits)? Choosing an initial journey prioritizes the first demonstrable outcome; it does not exclude the other experiences later.
+
+- **2.2 First user-facing milestone is the Catholic-contextual desktop.**  
+  Status: owner-approved 2026-10-14. Answers 2.1 (owner-provided alternative to A/B/C).  
+  First deliver a cohesive, polished and genuinely pleasant everyday Linux desktop whose interactions and presentation **respect the dignity of the human soul**. The Catholic character should initially appear through subtle system-level context and conventions, not require users to launch conspicuously religious applications. More explicitly Christian and Catholic apps can follow in later milestones; they are not the initial product's acceptance criterion. The existing boot, installation and verification work remains a technical foundation, not a substitute for an experienced desktop.
+
+- **2.3 Subtle Catholic conventions as system defaults.**  
+  Status: owner-approved 2026-10-14.  
+  The default desktop should reflect Catholic context in small, everyday details: **liturgical colors** in its visual language; **Sunday as the first day of the week** in calendars; and **AD/BC instead of CE/BCE** where dates are shown with historical era labels. These are experience requirements for the Moenarch-controlled desktop and its defaults, not claims that every unmodified third-party Linux program can be made to obey them. The precise use and behavior of liturgical colors remains unresolved in 2.4.
+
+- **2.4** [question] **How should liturgical colors affect the everyday desktop?**  
+  Unanswered.  
+  Should **A** the desktop's subtle accents reflect the liturgical day or season automatically, or **B** the system provide a stable Catholic-inspired color palette that users select independently of the calendar? Both should preserve legibility and restraint; this decision does not authorize unrelated devotional apps or additional background services.
+
