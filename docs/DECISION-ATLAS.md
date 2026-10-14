@@ -150,5 +150,15 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   Restoring the pre-update recovery point (5.4) should **revert the operating system, installed applications and relevant system configuration** to their previous working state while **preserving users' personal documents, photos and other personal files**, including files created or edited after the recovery point. A recovery operation must not silently turn an update failure into loss of recent personal work. Arrange recovery boundaries so the system can return to a usable KDE Plasma desktop without rolling back personal files; show a comprehensible explanation of what changes and what stays before confirmation. The details of which application-specific settings are system state versus personal data require implementation-time analysis and evidence; this decision does not choose a filesystem, snapshot format or backup product.
 
 - **5.7** [question] **Who should authorize restoring a system after a failed update?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 5.8 (option A); retained as the historical Question.  
   If the updated system cannot start normally, should Moenarch **offer an accessible recovery choice but wait for explicit user confirmation before reverting** (A), or **attempt to restore the last working system automatically when a failed-boot condition is detected** (B)? Both must honor personal-file preservation (5.6) and make recovery understandable. This is about default authorization of a potentially consequential restore, not which recovery implementation to use.
+
+- **5.8 Require explicit confirmation before system recovery.**  
+  Status: owner-approved 2026-10-14. Answers 5.7 (option A).  
+  When an update leaves the installed system or KDE Plasma unusable, Moenarch must provide an understandable **built-in recovery option reachable without a functioning desktop**, but **must not automatically revert the installed system when a failed boot is detected**. The user chooses to initiate recovery and explicitly confirms the proposed restoration after being shown which previous working system state will be restored and that personal files are preserved (5.4, 5.6). Merely entering a recovery environment or encountering a boot failure must not itself perform a rollback. The choice does not specify bootloader, filesystem, recovery UI toolkit, or how failures are diagnosed.
+
+## 6. Finding and installing applications
+
+- **6.1** [question] **Which source should be preferred for ordinary desktop applications?**  
+  Unanswered.  
+  For an approachable **graphical application-installation experience**, should Moenarch prefer **native Arch repository packages first** where an application is available in both formats (A), or **Flatpak applications first** where an application is available in both formats (B)? This decides the initial recommendation/source priority for typical desktop software, not the operating system's package manager, and does not automatically forbid the other source.
