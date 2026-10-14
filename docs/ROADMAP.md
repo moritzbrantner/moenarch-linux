@@ -26,7 +26,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 
 ### Stage 2 — Automated installation
 
-- Retain the existing explicit-opt-in, test-only installation proof. The approved first-use experience calls for a separate **guided graphical installer launched from the live Plasma desktop**, not an automatically executed disk write (Decision 4.2). Include everything needed for the standard KDE Plasma installation on the USB image; build and verify the normal user-facing installation with networking disabled (Decision 4.4). **Unencrypted storage is preselected**, and users can explicitly opt into encryption after seeing the data-protection trade-off; independently verify both offline installation paths (Decision 4.6).
+- Retain the existing explicit-opt-in, test-only installation proof. The approved first-use experience calls for a separate **guided graphical installer launched from the live Plasma desktop**, not an automatically executed disk write (Decision 4.2). Include everything needed for the standard KDE Plasma installation on the USB image; build and verify the normal user-facing installation with networking disabled (Decision 4.4). **Unencrypted storage is preselected**, and users can explicitly opt into encryption after seeing the data-protection trade-off; independently verify both offline installation paths (Decision 4.6). The installed system layout must support the later **built-in pre-update recovery and non-KDE restore path** (Decision 5.4) in either storage mode; do not preselect a filesystem merely from this product decision.
 - Partition a blank virtual disk.
 - Install a minimal Moenarch system using standard Arch installation primitives.
 - Configure bootloader, locale, **local user account with password**, networking, and release identity. First installed boot requires password login (Decision 4.8), independently of whether optional disk encryption was selected.
@@ -53,7 +53,8 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 
 - Notify the installed KDE Plasma user when system updates are available; **require explicit approval to install by default** (Decision 5.2).
 - Offer a discoverable, persistent desktop setting to switch to **automatic update installation** and back to user-approved updates; the selected mode must govern the real update process, not only the interface.
-- Verify notification, manual approval, automatic mode, persistence across restart, and clear update results/failure indications in a real installed desktop with controlled update inputs. Recovery experience remains open in Question 5.3.
+- Verify notification, manual approval, automatic mode, persistence across restart, and clear update results/failure indications in a real installed desktop with controlled update inputs.
+- **Create a usable pre-update recovery point** and provide a **built-in restore path that remains accessible if KDE or the normal system fails to start** (Decision 5.4). Verify restoration after an intentionally breaking update without relying on the live desktop or only on terminal commands. The treatment of personal files during restore remains unresolved in Question 5.5.
 
 ## Future product journeys
 
