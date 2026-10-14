@@ -56,8 +56,12 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   Subtle default desktop accents automatically reflect the current Catholic liturgical day or season. Keep the presentation restrained and legible. The calendar source, rite/locality scope, exact theme mechanics, and optional customization remain to be specified.
 
 - **2.6** [question] **Which Catholic liturgical calendar governs the default daily accents?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 2.7 (option A); retained as the historical Question.  
   Should Moenarch follow the **current Roman Rite General Roman Calendar** by default, or the **traditional calendar associated with the 1962 Roman Missal**? The calendars can assign different observances and colors on the same date. This question selects the initial authoritative calendar, not whether other calendars or local observances could ever be supported.
+
+- **2.7 Current General Roman Calendar as the default.**  
+  Status: owner-approved 2026-10-14. Answers 2.6 (option A).  
+  The **current General Roman Calendar of the Roman Rite** is the authoritative default for Moenarch's automatically selected liturgical accent colors (Decision 2.5), rather than the calendar associated with the 1962 Roman Missal. Daily colors should follow the applicable observance, not a naive fixed mapping of civil months to liturgical seasons. This does not select a particular data provider, approve local or diocesan variations, or rule out a future explicit selection of another Catholic calendar.
 
 ## 3. Everyday desktop interaction
 
@@ -76,3 +80,7 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
 - **3.4 KDE Plasma as the initial desktop foundation.**  
   Status: owner-approved 2026-10-14. Answers 3.3 (option A).  
   The initial graphical Moenarch desktop should use **KDE Plasma**, with a conventional mouse-first layout and discoverable application launcher, panels, overlapping windows and settings in accordance with Decision 3.2. Adapt and compose the established desktop instead of creating a new desktop environment. The user-selected Plasma foundation should support the subtle calendar-driven color accents and Sunday-first calendar defaults already approved; no particular KDE application bundle, display protocol or custom extension architecture is decided here.
+
+- **3.5** [question] **What visual character should the default Plasma desktop have?**  
+  Unanswered.  
+  Should Moenarch use a **clean contemporary desktop** whose Catholic identity appears primarily in its liturgical accent colors and conventions (A), or a **warm, classical Catholic visual style** with restrained traditional art, typography or motifs alongside those accents (B)? Both retain the approved accessible mouse-first layout and functional clarity; the choice concerns the desktop's visible character, not additional devotional apps.
