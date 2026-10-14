@@ -14,6 +14,10 @@ Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first 
 
 Boot the installation media into a working live KDE Plasma desktop to explore Moenarch and check hardware before making changes to disk. Start a guided graphical installation explicitly through **Install Moenarch**; the desktop itself must not start installation automatically (Decision 4.2). The USB contains the packages needed to install the standard KDE Plasma system and boot it afterward **without internet access** (Decision 4.4). The graphical installer selects **unencrypted storage by default**, while allowing users to choose encrypted storage (Decision 4.6). It creates a local user with a password, and the installed system **requires password login before entering KDE Plasma** (Decision 4.8). A login password is not a substitute for disk encryption.
 
+## Installation image releases
+
+The normal public Moenarch installation image will be a **versioned, deliberately published ISO** that has passed integrated testing of the actual live desktop, guided offline installation and installed KDE Plasma experience. Passing CI builds remain development artifacts until separately accepted and released (Decision 7.4). Installed computers continue receiving native updates directly from Arch (Decision 7.2).
+
 ## System updates
 
 Native system packages receive available updates directly from the **official Arch rolling repositories**, without a separate Moenarch-managed staging feed (Decision 7.2). The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2). Updates must establish a usable pre-update recovery point, with built-in recovery even if the normal graphical desktop cannot start (Decision 5.4). Restoring must revert broken system state while **preserving personal documents and files** (Decision 5.6). The recovery option is accessible without a working desktop, but **restoration requires explicit user confirmation** rather than an automatic rollback after failed boot (Decision 5.8).
