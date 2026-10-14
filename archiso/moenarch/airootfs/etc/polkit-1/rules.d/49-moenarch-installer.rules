@@ -1,0 +1,9 @@
+// Permit only the live account to launch the established Calamares installer.
+// The rule is removed from the installed system before account creation.
+polkit.addRule(function (action, subject) {
+    if (subject.user === "moenarch" &&
+        action.id === "org.freedesktop.policykit.exec" &&
+        action.lookup("program") === "/usr/bin/calamares") {
+        return polkit.Result.YES;
+    }
+});

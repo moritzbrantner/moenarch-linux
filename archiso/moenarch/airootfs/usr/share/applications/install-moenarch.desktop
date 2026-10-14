@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Moenarch
+Comment=Install Moenarch Linux to a dedicated disk (erases selected disk)
+Exec=pkexec /usr/bin/calamares
+Icon=drive-harddisk
+Terminal=false
+Categories=System;
+Keywords=Install;Setup;Moenarch;
