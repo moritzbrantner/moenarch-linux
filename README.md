@@ -14,6 +14,10 @@ Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first 
 
 Boot the installation media into a working live KDE Plasma desktop to explore Moenarch and check hardware before making changes to disk. Start a guided graphical installation explicitly through **Install Moenarch**; the desktop itself must not start installation automatically (Decision 4.2). The USB contains the packages needed to install the standard KDE Plasma system and boot it afterward **without internet access** (Decision 4.4). The graphical installer selects **unencrypted storage by default**, while allowing users to choose encrypted storage (Decision 4.6). It creates a local user with a password, and the installed system **requires password login before entering KDE Plasma** (Decision 4.8). A login password is not a substitute for disk encryption.
 
+## System updates
+
+The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2).
+
 ## Engineering foundation
 
 1. Build a bootable Moenarch Linux ISO from Archiso's `releng` profile.
