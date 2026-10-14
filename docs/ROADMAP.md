@@ -50,6 +50,13 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 - Add a small Rust CLI for installer orchestration, diagnostics, verification, and reconciliation.
 - Keep ownership boundaries explicit: Moenarch composes Arch unless a justified divergence is required. Do not create a Moenarch-owned intermediate mirror or snapshot gate for upstream native package updates merely to deliver the initial desktop (Decision 7.2).
 
+## Public installation-image releases
+
+- The normal public ISO download is a **versioned, deliberately promoted release artifact**, not a moving pointer to the newest CI/default-branch image (Decision 7.4). Development/CI images may exist separately, clearly distinguished from public releases.
+- Promote the **same candidate ISO** only after its integrated boot, usable live KDE Plasma, guided fully offline installation, password login and real installed-desktop journey are independently verified. Retain artifact identity, source revision, build-input manifest, checksum and acceptance evidence with the public release; no package-list-only or text-only boot proof suffices.
+- Preserve an identifiable release download so users can tell which tested image they obtained. Do not infer an automatic publication trigger or fixed release cadence. The initial requirement for physical hardware smoke tests remains open in Question 7.5; QEMU end-to-end evidence is a necessary baseline.
+- Installing this versioned ISO does **not** pin ongoing native updates to its release date: installed systems follow the official Arch rolling repositories under Decision 7.2.
+
 ## System maintenance experience
 
 - Source ongoing **native package updates directly from the official Arch rolling repositories**, not a Moenarch-managed staged repository or package-snapshot release gate (Decision 7.2). Availability never overrides the user's chosen update-consent setting or the requirement for coherent full-system upgrades and recovery points.
