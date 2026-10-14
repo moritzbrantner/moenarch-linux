@@ -16,7 +16,7 @@ Boot the installation media into a working live KDE Plasma desktop to explore Mo
 
 ## System updates
 
-The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2). Updates must establish a usable pre-update recovery point, with built-in recovery even if the normal graphical desktop cannot start (Decision 5.4). Restoring must revert broken system state while **preserving personal documents and files** (Decision 5.6). The recovery option is accessible without a working desktop, but **restoration requires explicit user confirmation** rather than an automatic rollback after failed boot (Decision 5.8).
+Native system packages receive available updates directly from the **official Arch rolling repositories**, without a separate Moenarch-managed staging feed (Decision 7.2). The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2). Updates must establish a usable pre-update recovery point, with built-in recovery even if the normal graphical desktop cannot start (Decision 5.4). Restoring must revert broken system state while **preserving personal documents and files** (Decision 5.6). The recovery option is accessible without a working desktop, but **restoration requires explicit user confirmation** rather than an automatic rollback after failed boot (Decision 5.8).
 
 ## Installing applications
 
