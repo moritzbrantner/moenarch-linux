@@ -48,10 +48,11 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 ### Stage 5 — Rust system tooling
 
 - Add a small Rust CLI for installer orchestration, diagnostics, verification, and reconciliation.
-- Keep ownership boundaries explicit: Moenarch composes Arch unless a justified divergence is required.
+- Keep ownership boundaries explicit: Moenarch composes Arch unless a justified divergence is required. Do not create a Moenarch-owned intermediate mirror or snapshot gate for upstream native package updates merely to deliver the initial desktop (Decision 7.2).
 
 ## System maintenance experience
 
+- Source ongoing **native package updates directly from the official Arch rolling repositories**, not a Moenarch-managed staged repository or package-snapshot release gate (Decision 7.2). Availability never overrides the user's chosen update-consent setting or the requirement for coherent full-system upgrades and recovery points.
 - Notify the installed KDE Plasma user when system updates are available; **require explicit approval to install by default** (Decision 5.2).
 - Offer a discoverable, persistent desktop setting to switch to **automatic update installation** and back to user-approved updates; the selected mode must govern the real update process, not only the interface.
 - Verify notification, manual approval, automatic mode, persistence across restart, and clear update results/failure indications in a real installed desktop with controlled update inputs.
@@ -62,7 +63,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 - Offer a discoverable, everyday **graphical way to find, install, launch and remove ordinary desktop applications** on the installed KDE Plasma system. Prefer **native packages from the Arch repositories** when an application is available through both Arch and Flatpak (Decision 6.2).
 - Identify each application's package source clearly. Use the existing Arch package manager for native installations rather than inventing another package-management authority; do not silently install a Flatpak in place of the preferred native package.
 - Keep the **default preinstalled selection essential-focused** (Decision 6.6). Offer fuller office, media and communication software through user-selected installs rather than preloading a broad suite.
-- Verify an actual native application install, launch and removal from the installed desktop, plus consistent source preference when the same application has multiple available formats. **Exclude AUR entries and installation actions from the initial graphical catalog** (Decision 6.4); it must not misrepresent community AUR recipes as official Arch packages. Flatpak may remain available separately but is not required in the initial slice (Decision 6.2). The scope of preinstalled applications remains open in Question 6.5.
+- Verify an actual native application install, launch and removal from the installed desktop, plus consistent source preference when the same application has multiple available formats. **Exclude AUR entries and installation actions from the initial graphical catalog** (Decision 6.4); it must not misrepresent community AUR recipes as official Arch packages. Flatpak may remain available separately but is not required in the initial slice (Decision 6.2). The preinstalled essential set is approved by Decision 6.6.
 
 ## Future product journeys
 
