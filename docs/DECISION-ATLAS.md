@@ -134,8 +134,13 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   By default, Moenarch should **notify users that routine system/security updates are available and wait for explicit approval before installing them**. Users must be able to **change this behavior through an understandable, persistent desktop setting**, including choosing **automatic installation** instead. Changing the setting must change actual update behavior rather than only the appearance of a toggle, and automatic installation must never be silently enabled on an existing installation. Present the update's effect and any required follow-up clearly. This decision does not settle auto-restart policy, update cadence, individual-package exclusions, or recovery mechanisms.
 
 - **5.3** [question] **How should an ordinary user recover if a system update breaks the desktop?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 5.4 (option A); retained as the historical Question.  
   Should Moenarch provide a **built-in route to restore the previous working system** from a pre-update recovery point (A), or prioritize **guided recovery and repair from installation media** without maintaining automatic pre-update restore points (B)? Both must avoid destructive surprise and provide an understandable path back to a usable machine. This determines a meaningful disk/recovery contract, not merely a visual setting.
 
+- **5.4 Restore the previous working system after a failed update.**  
+  Status: owner-approved 2026-10-14. Answers 5.3 (option A).  
+  Before applying a system update, Moenarch should establish a **usable recovery point representing the previous working system**. If the update breaks the installed system or prevents KDE Plasma from starting, the person must have an **understandable built-in way to restore that pre-update working state**, including access to recovery **without relying on the broken desktop**. This protects the user experience under both approved update modes: updates requiring explicit approval and user-enabled automatic installation (5.2). The recovery path must be independently demonstrated on the installed system, including a deliberately broken update and restoration of ordinary desktop use. The exact filesystem, snapshot implementation, retention schedule and treatment of personal files/settings are not chosen by this decision.
 
-
+- **5.5** [question] **What data should restoring a pre-update system affect?**  
+  Unanswered.  
+  Should a restore **revert the OS, applications and system configuration while preserving the user's personal documents and files** (A), or **return the whole machine, including personal files and user data, to its pre-update state** (B)? The first requires separating recoverable system state from user data; the second risks losing files created or edited since the recovery point. This Question concerns the default recovery consequence, not the storage technology.
