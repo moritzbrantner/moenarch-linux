@@ -2,15 +2,15 @@
 
 This document tracks delivery milestones. The [Decision Atlas](DECISION-ATLAS.md) is the authority for user-facing product direction: a cohesive everyday Linux desktop that helps people grow closer to the Christian faith (1.1), with the initial faith experience primarily serving practicing Christians (1.3) within an explicitly Catholic liturgical and catechetical framework (1.5).
 
-The first user-facing milestone is the **quality and usability of the desktop itself**, with subtle Catholic defaults (Decisions 2.2–2.3). The Arch-based image, installation, developer environment, and verification stages remain engineering foundations for that experience. More explicitly Catholic applications are later work; the precise behavior of liturgical colors remains Question 2.4.
+The first user-facing milestone is the **quality and usability of the desktop itself**, with subtle Catholic defaults (Decisions 2.2–2.3). The Arch-based image, installation, developer environment, and verification stages remain engineering foundations for that experience. More explicitly Catholic applications are later work. Under Decision 2.5, subtle desktop accents automatically follow the current liturgical day or season.
 
 ## First product milestone — A dignified Catholic-contextual desktop
 
 - Install and use a coherent, polished graphical Linux desktop for ordinary daily tasks, not a shell with a few disconnected apps.
-- Present Catholic identity through restrained visual treatment incorporating liturgical colors, rather than requiring prominent devotional interfaces.
+- Present Catholic identity through restrained accent colors that automatically reflect the current liturgical day or season (Decision 2.5), rather than requiring prominent devotional interfaces.
 - Show **Sunday first** in the desktop calendar and use **AD/BC** where Moenarch-controlled date displays render explicit era names.
 - Respect the person using the desktop: the experience should be clear, considerate, and non-manipulative, not attention-grabbing for its own sake.
-- Provide real user-facing evidence from the **installed graphical system**, including interactive calendar behavior and a captured desktop session. Add focused verification for era formatting and the chosen liturgical-color behavior once Question 2.4 is answered.
+- Provide real user-facing evidence from the **installed graphical system**, including interactive calendar behavior, date-era formatting, and a captured desktop session. Demonstrate that liturgical accent colors change with representative liturgical dates and are reflected in the actual desktop.
 
 This milestone is a **product acceptance target**, not a claim that the desktop is already implemented. It can be delivered through independently verifiable vertical slices without changing its intended end state. The system does not need dedicated Catholic prayer, research, or focus applications to meet this first milestone.
 
