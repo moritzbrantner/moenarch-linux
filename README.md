@@ -8,7 +8,7 @@ The [Decision Atlas](docs/DECISION-ATLAS.md) records approved product direction 
 
 ## First user-facing milestone
 
-Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first windows, menus, and settings, and a restrained, warm **classical Catholic visual identity**: subtle accent colors that follow the Catholic liturgical day or season automatically, calendars starting on Sunday, and AD/BC era labels rather than CE/BCE. Its everyday experience should respect the dignity of the human soul. More explicitly Christian applications can follow later. See the [Decision Atlas](docs/DECISION-ATLAS.md) for approved direction and open details.
+Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first windows, menus, and settings, and a restrained, warm **classical Catholic visual identity**: subtle accent colors that follow the Catholic liturgical day or season automatically, calendars starting on Sunday, and AD/BC era labels rather than CE/BCE. Its everyday experience should respect the dignity of the human soul. A **focused set of essential everyday apps**—web browsing, file management, basic text editing, media viewing and system utilities—will be preinstalled and usable offline, rather than a comprehensive office/communication suite (Decision 6.6). More explicitly Christian applications can follow later. See the [Decision Atlas](docs/DECISION-ATLAS.md) for approved direction and open details.
 
 ## Try before installing
 
@@ -20,7 +20,7 @@ The installed desktop will notify people when system updates are available. By d
 
 ## Installing applications
 
-The intended graphical software experience prefers **native Arch repository packages** for desktop applications when both a native package and a Flatpak are available. Sources must be visible, and Flatpak is not forbidden. **AUR packages are excluded from the initial graphical catalog**, while experienced users may choose to use AUR tooling separately (Decisions 6.2 and 6.4).
+The standard desktop includes only the **essential applications needed for everyday use**; users can add other software through the graphical catalog (Decision 6.6). The intended graphical software experience prefers **native Arch repository packages** for desktop applications when both a native package and a Flatpak are available. Sources must be visible, and Flatpak is not forbidden. **AUR packages are excluded from the initial graphical catalog**, while experienced users may choose to use AUR tooling separately (Decisions 6.2 and 6.4).
 
 ## Engineering foundation
 
