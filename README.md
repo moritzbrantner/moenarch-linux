@@ -16,7 +16,7 @@ Boot the installation media into a working live KDE Plasma desktop to explore Mo
 
 ## System updates
 
-The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2).
+The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2). Updates must establish a usable pre-update recovery point, with built-in recovery even if the normal graphical desktop cannot start (Decision 5.4).
 
 ## Engineering foundation
 
