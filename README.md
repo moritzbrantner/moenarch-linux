@@ -6,7 +6,11 @@ The project starts thin: Arch remains the upstream authority for the kernel, pac
 
 The [Decision Atlas](docs/DECISION-ATLAS.md) records approved product direction and unresolved questions. The [roadmap](docs/ROADMAP.md) tracks the delivery milestones; it does not approve specific desktop or devotional features on its own.
 
-## Initial milestones
+## First user-facing milestone
+
+Offer a polished, usable Linux desktop with subtle Catholic context: liturgical colors in its visual language, calendars starting on Sunday, and AD/BC era labels rather than CE/BCE. Its everyday experience should respect the dignity of the human soul. More explicitly Christian applications can follow later. See the [Decision Atlas](docs/DECISION-ATLAS.md) for approved direction and open details.
+
+## Engineering foundation
 
 1. Build a bootable Moenarch Linux ISO from Archiso's `releng` profile.
 2. Prove the image boots under QEMU and identifies itself as Moenarch Linux.
