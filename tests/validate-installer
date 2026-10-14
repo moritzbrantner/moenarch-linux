@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Fail closed on installer defaults which could erase the wrong disk or lose /home."""
+from pathlib import Path
+import yaml
+
+repo = Path(__file__).resolve().parent.parent
+root = repo / "archiso/moenarch/airootfs"
+cal = root / "etc/calamares"
+def config(path):
+    return yaml.safe_load((cal / path).read_text())
+
+settings = config("settings.conf")
+partition = config("modules/partition.conf")
+mount = config("modules/mount.conf")
+users = config("modules/users.conf")
+unpack = config("modules/unpackfs.conf")
+dm = config("modules/displaymanager.conf")
+boot = config("modules/bootloader.conf")
+assert settings["prompt-install"] is True
+assert settings["branding"] == "moenarch"
+seq = settings["sequence"]
+exec_seq = seq[1]["exec"]
+assert exec_seq.index("partition") < exec_seq.index("unpackfs") < exec_seq.index("shellprocess@finalize-moenarch") < exec_seq.index("users")
+assert partition["allowManualPartitioning"] is False
+assert partition["initialPartitioningChoice"] == "none"
+assert partition["defaultFileSystemType"] == "btrfs"
+assert partition["availableFileSystemTypes"] == ["btrfs"]
+assert partition["preCheckEncryption"] is False
+assert partition["enableLuksAutomatedPartitioning"] is True
+assert partition["luksGeneration"] == "luks2"
+assert partition["efi"]["mountPoint"] == "/boot"
+assert boot["efiBootLoader"] == "systemd-boot"
+assert partition["userSwapChoices"] == ["none"]
+subvols = {s["mountPoint"]: s["subvolume"] for s in mount["btrfsSubvolumes"]}
+assert subvols["/"] == "/@"
+assert subvols["/home"] == "/@home"
+assert subvols["/"] != subvols["/home"]
+assert subvols["/.snapshots"] == "/@snapshots"
+assert unpack["unpack"] == [{"source": "/run/archiso/bootmnt/moenarch/x86_64/airootfs.sfs", "sourcefs": "squashfs", "destination": ""}]
+assert users["displayAutologin"] is False
+assert users["doAutologin"] is False
+assert users["passwordRequirements"]["minLength"] >= 8
+assert dm["displaymanagers"] == ["sddm"]
+assert config("modules/welcome.conf")["requirements"]["internetCheck"] is False
+assert config("modules/shellprocess-finalize-moenarch.conf")["dontChroot"] is False
+patch = (repo / "packaging/calamares/whole-disk-only.patch").read_text()
+assert "+    m_replaceButton->hide();" in patch
+assert "+    m_alongsideButton->hide();" in patch
+assert "moenarch-calamares" in (repo / "archiso/moenarch/packages.add").read_text()
+live = (root / "usr/local/lib/moenarch/finalize-live-root").read_text()
+installed = (root / "usr/local/lib/moenarch/finalize-installed-root").read_text()
+assert "useradd" in live and "userdel" in installed
+assert "sddm.conf.d/10-moenarch-live.conf" in installed
+assert "moenarch-calamares" in installed
+native = (root / "usr/local/share/moenarch/pacman.conf").read_text()
+assert "[core]" in native and "[extra]" in native and "[moenarch-build]" not in native
+assert "MOENARCH_LOCAL_REPO" in (repo / "scripts/prepare-profile").read_text()
+assert "pkexec /usr/bin/calamares" in (root / "usr/local/bin/install-moenarch").read_text()
+print("Calamares safety, offline, login and recovery-layout contracts verified (static only).")
