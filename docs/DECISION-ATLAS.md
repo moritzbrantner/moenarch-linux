@@ -160,5 +160,13 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
 ## 6. Finding and installing applications
 
 - **6.1** [question] **Which source should be preferred for ordinary desktop applications?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 6.2 (option A); retained as the historical Question.  
   For an approachable **graphical application-installation experience**, should Moenarch prefer **native Arch repository packages first** where an application is available in both formats (A), or **Flatpak applications first** where an application is available in both formats (B)? This decides the initial recommendation/source priority for typical desktop software, not the operating system's package manager, and does not automatically forbid the other source.
+
+- **6.2 Prefer native Arch repository packages for desktop apps.**  
+  Status: owner-approved 2026-10-14. Answers 6.1 (option A).  
+  In the ordinary **graphical application discovery and installation** experience, Moenarch should **prefer native packages from the Arch repositories** when an application is available both there and as a Flatpak. The interface must clearly identify a package's source and install a native Arch package when the preferred/default result is chosen, maintaining the existing Arch package-management boundary. The user is not prohibited from choosing Flatpak where available; this decision does not require Flatpak integration to be shipped in the initial slice, replace pacman, include the AUR, or imply an initial set of bundled applications.
+
+- **6.3** [question] **Should AUR applications appear in the initial graphical catalog?**  
+  Unanswered.  
+  Should the first graphical software catalog **only expose trusted standard repository results by default**, keeping user-contributed Arch User Repository build recipes outside its normal browse/install workflow (A), or **also show AUR results with unmistakable third-party attribution and explicit extra confirmation before installation** (B)? The AUR is not the official Arch binary package repository and raises different source/build trust considerations. This question affects the initial accessible catalog, not whether experienced users may use AUR tooling separately.
