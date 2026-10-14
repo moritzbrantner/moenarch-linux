@@ -186,5 +186,13 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
 ## 7. Release and update distribution
 
 - **7.1** [question] **Which update supply model should the initial Moenarch desktop use?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 7.2 (option A); retained as the historical Question.  
   Should Moenarch receive native packages **directly from Arch's rolling repositories** as they become available (A), relying on the approved user-controlled update and pre-update recovery experience, or publish updates through **Moenarch-managed, tested package snapshots or staged repositories** (B) before offering them to users, adding release curation and infrastructure ownership in return for tighter update-set control? Both would retain the Arch package ecosystem and user-approved installation default (5.2); this is a choice about Moenarch's ongoing update supply responsibility, not the UI's update switch.
+
+- **7.2 Direct Arch rolling repositories for native updates.**  
+  Status: owner-approved 2026-10-14. Answers 7.1 (option A).  
+  The initial Moenarch system obtains ongoing **native Arch package updates directly from the official Arch rolling repositories**, rather than relying on Moenarch-managed staged mirrors or tested package snapshots as an intermediate release gate. Keep Arch responsible for its repository packages, signing and package ecosystem while Moenarch owns its composition, defaults and any Moenarch-specific packages. This determines the **source of available updates**, not when they are installed: Decision 5.2 still requires user approval by default and permits an explicitly configured automatic mode, with pre-update recovery and user-confirmed restoration under Decisions 5.4, 5.6 and 5.8. Apply coherent system upgrades rather than selective partial upgrades; do not mistake direct upstream availability for permission to skip the user's update preference, safety checks or recovery point. This does not rule out testing Moenarch ISO releases or defining a separate policy for Moenarch-owned packages.
+
+- **7.3** [question] **What should be the normal public installation-image release channel?**  
+  Unanswered.  
+  Should the main user-facing download be a **versioned, deliberately released installation image** that is separately accepted and published after integrated installation/desktop verification (A), or a **continuously refreshed image from the latest passing default-branch build** (B)? Installed systems still consume direct Arch rolling updates under Decision 7.2 in either case. This question chooses the ordinary download/release contract, not a hard-coded calendar cadence or whether development builds may be available separately.
