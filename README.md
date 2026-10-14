@@ -12,7 +12,7 @@ Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first 
 
 ## Try before installing
 
-Boot the installation media into a working live KDE Plasma desktop to explore Moenarch and check hardware before making changes to disk. Start a guided graphical installation explicitly through **Install Moenarch**; the desktop itself must not start installation automatically (Decision 4.2). Whether full installation can complete offline remains an open product question.
+Boot the installation media into a working live KDE Plasma desktop to explore Moenarch and check hardware before making changes to disk. Start a guided graphical installation explicitly through **Install Moenarch**; the desktop itself must not start installation automatically (Decision 4.2). The USB contains the packages needed to install the standard KDE Plasma system and boot it afterward **without internet access** (Decision 4.4).
 
 ## Engineering foundation
 
