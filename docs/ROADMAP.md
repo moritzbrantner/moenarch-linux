@@ -49,6 +49,12 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 - Add a small Rust CLI for installer orchestration, diagnostics, verification, and reconciliation.
 - Keep ownership boundaries explicit: Moenarch composes Arch unless a justified divergence is required.
 
+## System maintenance experience
+
+- Notify the installed KDE Plasma user when system updates are available; **require explicit approval to install by default** (Decision 5.2).
+- Offer a discoverable, persistent desktop setting to switch to **automatic update installation** and back to user-approved updates; the selected mode must govern the real update process, not only the interface.
+- Verify notification, manual approval, automatic mode, persistence across restart, and clear update results/failure indications in a real installed desktop with controlled update inputs. Recovery experience remains open in Question 5.3.
+
 ## Future product journeys
 
 After the first product milestone, independently usable Catholic applications and richer integration may advance the approved direction. Do not presume a particular prayer app, research assistant, content library, or content-control mechanism before further owner decisions. A Sunday-first **desktop calendar** is already approved under 2.3; a complete liturgical-calendar application is not.
