@@ -10,6 +10,7 @@ The first user-facing milestone is the **quality and usability of the desktop it
 - Boot the installed system to a **graphical account-password login screen** and only then open KDE Plasma (Decision 4.8). The login password is distinct from optional disk encryption (Decision 4.6). Configure a **familiar, mouse-first** desktop with conventional panels, menus, overlapping windows and discoverable controls (Decisions 3.2 and 3.4); ordinary tasks must not require memorized shortcuts or automatic tiling.
 - Present a **warm, classical Catholic visual identity** through restrained sacred-art, architectural and typographic influences (Decision 3.6) alongside accent colors automatically reflecting the **current General Roman Calendar** (Decisions 2.5 and 2.7). Keep normal interface controls legible, usable and free from excessive ornamentation; do not require devotional applications.
 - Show **Sunday first** in the desktop calendar and use **AD/BC** where Moenarch-controlled date displays render explicit era names.
+- Provide a **small but usable preinstalled essentials collection** for browsing the web, managing files, editing plain text, basic media viewing and ordinary system utilities (Decision 6.6). These are available in the installed system without network access or additional installs; a larger office/media/communication suite is not an initial requirement.
 - Respect the person using the desktop: the experience should be clear, considerate, and non-manipulative, not attention-grabbing for its own sake.
 - Provide real user-facing evidence from the **installed KDE Plasma session**, including a complete mouse-driven journey (launching an app, managing windows, opening Plasma settings), interactive calendar behavior, date-era formatting, and screenshots showing the classical Catholic visual treatment across ordinary desktop surfaces. Demonstrate that liturgical accent colors match representative observances in the current General Roman Calendar, change when the effective liturgical date changes, and are reflected in the actual desktop.
 
@@ -37,7 +38,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 - Define `base`, `desktop`, `developer`, and `server` as composable package/service policies.
 - Keep one distribution and one installer rather than separate editions.
 - Add machine-readable profile validation.
-- Make the `desktop` profile a genuinely usable, cohesive **KDE Plasma** experience rather than merely an installable package list. Verify account-password login and the actual installed mouse-first desktop user journey against the Decision Atlas.
+- Make the `desktop` profile a genuinely usable, cohesive **KDE Plasma** experience rather than merely an installable package list. Include the approved **essential everyday applications** (Decision 6.6) in the real installed system, and verify offline availability and actual browser, file-manager, text-editor, basic media-viewer and settings workflows alongside account-password login and the mouse-first desktop user journey.
 
 ### Stage 4 — Moenarch packages
 
@@ -60,6 +61,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 
 - Offer a discoverable, everyday **graphical way to find, install, launch and remove ordinary desktop applications** on the installed KDE Plasma system. Prefer **native packages from the Arch repositories** when an application is available through both Arch and Flatpak (Decision 6.2).
 - Identify each application's package source clearly. Use the existing Arch package manager for native installations rather than inventing another package-management authority; do not silently install a Flatpak in place of the preferred native package.
+- Keep the **default preinstalled selection essential-focused** (Decision 6.6). Offer fuller office, media and communication software through user-selected installs rather than preloading a broad suite.
 - Verify an actual native application install, launch and removal from the installed desktop, plus consistent source preference when the same application has multiple available formats. **Exclude AUR entries and installation actions from the initial graphical catalog** (Decision 6.4); it must not misrepresent community AUR recipes as official Arch packages. Flatpak may remain available separately but is not required in the initial slice (Decision 6.2). The scope of preinstalled applications remains open in Question 6.5.
 
 ## Future product journeys
