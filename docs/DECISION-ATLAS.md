@@ -100,5 +100,13 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   Booting Moenarch installation media normally takes people into a **usable, approachable KDE Plasma live desktop** where they can explore Moenarch, try ordinary desktop actions and inspect hardware compatibility before making changes to their disk. A visible, discoverable **Install Moenarch** action starts a **guided graphical installer** when the person chooses to proceed; installation is not forced on boot. Exploring the live session must not write to or repartition disks as an incidental consequence of opening the desktop. Explicit installation choices and destructive operations must remain gated by informed user action. Keep the live and installed desktop experiences coherent with Decisions 2.2, 2.3, 2.5, 2.7, 3.2, 3.4 and 3.6. The existing headless/test-only installation harness is not the user-facing installer.
 
 - **4.3** [question] **Should the initial guided installer work without an internet connection?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 4.4 (option A); retained as the historical Question.  
   Should the installation media contain the operating system needed for a full **offline installation** (larger download, usable without network access), or should installation **download system packages** after the live desktop starts (smaller image, connection required to finish)? Both still boot into the live desktop under Decision 4.2. The choice affects the USB image, installation user journey, and independent acceptance evidence.
+
+- **4.4 Full offline installation from the USB.**  
+  Status: owner-approved 2026-10-14. Answers 4.3 (option A).  
+  The Moenarch installation media must include everything required to **complete a normal installation of the standard KDE Plasma desktop without an internet connection**. Someone can boot into the approved live desktop (4.2), explicitly launch **Install Moenarch**, complete guided installation, remove the installation media and boot into the installed desktop without downloading packages or connecting to a network. A larger ISO is acceptable for this independence. Networking and updates can be used when available but must not be prerequisites for installation. This does not settle package snapshot strategy, additional optional online applications, installation storage/encryption defaults or whether the installer supports other desktop profiles.
+
+- **4.5** [question] **Should installation enable full-disk encryption by default?**  
+  Unanswered.  
+  For a fresh installation, should the installer preselect **encrypted system storage**, requiring an unlock secret at startup (A), or **unencrypted system storage**, minimizing setup and startup prompts (B)? Whichever default is chosen, the other option can remain explicitly selectable; this Question is about the experience a typical new user gets without changing advanced settings.
