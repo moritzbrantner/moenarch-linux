@@ -126,7 +126,16 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
 ## 5. Keeping the desktop updated
 
 - **5.1** [question] **How should Moenarch handle routine system updates by default?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 5.2 (option B with a changeable setting); retained as the historical Question.  
   Should it **automatically apply routine system and security updates in the background** with minimal user involvement (A), or **notify users and require explicit approval before applying updates** (B)? On an Arch-derived desktop the choice affects control over potentially disruptive changes, unattended package-management activity, and the reliability of an approachable everyday computer. In either case updates must remain understandable and recoverable; the question concerns default behavior, not whether users may ever change their preference.
+
+- **5.2 User-approved updates with a configurable automatic mode.**  
+  Status: owner-approved 2026-10-14. Answers 5.1 (option B with owner-requested adjustability).  
+  By default, Moenarch should **notify users that routine system/security updates are available and wait for explicit approval before installing them**. Users must be able to **change this behavior through an understandable, persistent desktop setting**, including choosing **automatic installation** instead. Changing the setting must change actual update behavior rather than only the appearance of a toggle, and automatic installation must never be silently enabled on an existing installation. Present the update's effect and any required follow-up clearly. This decision does not settle auto-restart policy, update cadence, individual-package exclusions, or recovery mechanisms.
+
+- **5.3** [question] **How should an ordinary user recover if a system update breaks the desktop?**  
+  Unanswered.  
+  Should Moenarch provide a **built-in route to restore the previous working system** from a pre-update recovery point (A), or prioritize **guided recovery and repair from installation media** without maintaining automatic pre-update restore points (B)? Both must avoid destructive surprise and provide an understandable path back to a usable machine. This determines a meaningful disk/recovery contract, not merely a visual setting.
+
 
 
