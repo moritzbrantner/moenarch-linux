@@ -53,7 +53,7 @@ root permissions and enough free disk space:
 ```bash
 sudo pacman -Syu --needed archiso git base-devel
 sudo ./scripts/build-iso
-sha256sum -c out/SHA256SUMS # run from out/ or adjust relative path
+( cd out && sha256sum -c SHA256SUMS )
 ./scripts/verify-iso-payload out/moenarch-linux-*.iso
 ./scripts/test-iso-boot out/moenarch-linux-*.iso
 ```

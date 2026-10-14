@@ -17,6 +17,8 @@ rm -f /etc/polkit-1/rules.d/49-moenarch-installer.rules
 rm -f /etc/systemd/system/getty@tty1.service
 rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf
 rm -f /etc/systemd/system/multi-user.target.wants/moenarch-boot-marker.service
+rm -f /etc/pacman.d/hooks/90-moenarch-live-root.hook
+rm -f /usr/local/bin/moenarch-boot-marker
 
 # The build-only repository must not leak into direct official Arch updates.
 install -m0644 /usr/local/share/moenarch/pacman.conf /etc/pacman.conf

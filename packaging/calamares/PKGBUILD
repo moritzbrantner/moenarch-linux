@@ -15,7 +15,7 @@ depends=(
 )
 makedepends=(
   'cmake' 'extra-cmake-modules' 'git' 'ninja'
-  'qt6-tools' 'python-pybind11' 'python' 'kconfig' 'kcoreaddons'
+  'qt6-tools' 'pybind11' 'python' 'kconfig' 'kcoreaddons'
   'kcrash' 'ki18n' 'kparts' 'kpmcore' 'kservice'
   'kwidgetsaddons' 'polkit-qt6' 'qt6-base' 'qt6-declarative'
   'qt6-svg' 'solid' 'yaml-cpp'

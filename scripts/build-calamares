@@ -18,7 +18,7 @@ pacman -Syu --needed --noconfirm \
   base-devel cmake extra-cmake-modules git ninja curl \
   qt6-base qt6-declarative qt6-tools qt6-svg \
   kconfig kcoreaddons kcrash ki18n kparts kpmcore kservice \
-  kwidgetsaddons polkit-qt6 solid yaml-cpp python python-pybind11
+  kwidgetsaddons polkit-qt6 solid yaml-cpp python pybind11
 
 mkdir -p -- "$work" "$repo"
 cp -- "$repo_root/packaging/calamares/"{PKGBUILD,whole-disk-only.patch} "$work/"
@@ -26,6 +26,7 @@ if ! id -u moenarch-builder >/dev/null 2>&1; then
   useradd -m --system --shell /bin/bash moenarch-builder
 fi
 chown -R moenarch-builder:moenarch-builder "$work"
+# shellcheck disable=SC2016 # The quoted program runs in a separate Bash process.
 runuser -u moenarch-builder -- bash -c '
   set -euo pipefail
   cd "$1"

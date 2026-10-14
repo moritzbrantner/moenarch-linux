@@ -16,6 +16,7 @@ haruna
 ark
 xdg-user-dirs
 polkit-kde-agent
+kdialog
 btrfs-progs
 cryptsetup
 dosfstools
