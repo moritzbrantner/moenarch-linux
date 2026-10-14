@@ -108,5 +108,14 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   The Moenarch installation media must include everything required to **complete a normal installation of the standard KDE Plasma desktop without an internet connection**. Someone can boot into the approved live desktop (4.2), explicitly launch **Install Moenarch**, complete guided installation, remove the installation media and boot into the installed desktop without downloading packages or connecting to a network. A larger ISO is acceptable for this independence. Networking and updates can be used when available but must not be prerequisites for installation. This does not settle package snapshot strategy, additional optional online applications, installation storage/encryption defaults or whether the installer supports other desktop profiles.
 
 - **4.5** [question] **Should installation enable full-disk encryption by default?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 4.6 (option B); retained as the historical Question.  
   For a fresh installation, should the installer preselect **encrypted system storage**, requiring an unlock secret at startup (A), or **unencrypted system storage**, minimizing setup and startup prompts (B)? Whichever default is chosen, the other option can remain explicitly selectable; this Question is about the experience a typical new user gets without changing advanced settings.
+
+- **4.6 Unencrypted storage is the fresh-install default.**  
+  Status: owner-approved 2026-10-14. Answers 4.5 (option B).  
+  The guided Moenarch installer preselects **unencrypted system storage** for a fresh installation to avoid requiring an extra disk-unlock secret at each startup. The installer must still allow the user to **explicitly select encrypted storage** instead; neither choice may be silently switched. Explain the privacy and lost/stolen-device implications of leaving storage unencrypted before the user confirms installation. Both installation choices must respect the approved fully offline installation experience (4.4), explicit informed consent for disk writes (4.2), and the same standard KDE Plasma outcome. This does not decide whether the installed OS requires a user-login password at boot.
+
+- **4.7** [question] **Should the installed desktop require a user login at startup?**  
+  Unanswered.  
+  After booting the installed system, should **A** the user enter their account password before accessing the desktop, or should **B** the system automatically log into the local desktop account? Unlike disk encryption (4.6), account login controls entry to a running OS rather than protecting a powered-off drive from offline access. Either option could be changed in settings later; this asks about the initial default.
+
