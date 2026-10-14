@@ -20,7 +20,7 @@ The installed desktop will notify people when system updates are available. By d
 
 ## Installing applications
 
-The intended graphical software experience prefers **native Arch repository packages** for desktop applications when both a native package and a Flatpak are available. Sources must be visible, and Flatpak is not forbidden; the initial AUR catalog policy is still undecided (Decision 6.2).
+The intended graphical software experience prefers **native Arch repository packages** for desktop applications when both a native package and a Flatpak are available. Sources must be visible, and Flatpak is not forbidden. **AUR packages are excluded from the initial graphical catalog**, while experienced users may choose to use AUR tooling separately (Decisions 6.2 and 6.4).
 
 ## Engineering foundation
 
