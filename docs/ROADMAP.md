@@ -7,7 +7,7 @@ The first user-facing milestone is the **quality and usability of the desktop it
 ## First product milestone — A dignified Catholic-contextual desktop
 
 - Boot installation media into a usable **KDE Plasma live desktop** to explore the system and check hardware before committing to installation; a visible **Install Moenarch** action starts a guided graphical installer on request (Decision 4.2). Simply booting or browsing the live system must not alter disks. The standard KDE Plasma installation must also complete entirely **offline** from media containing the required packages, followed by a successful offline boot from the installed disk (Decision 4.4).
-- Install and use **KDE Plasma** as the integrated graphical desktop (Decision 3.4), configured with a **familiar, mouse-first experience**: conventional panels and menus, overlapping windows, and discoverable application access and settings. Ordinary tasks must not require memorized keyboard shortcuts or automatic tiling (Decision 3.2).
+- Boot the installed system to a **graphical account-password login screen** and only then open KDE Plasma (Decision 4.8). The login password is distinct from optional disk encryption (Decision 4.6). Configure a **familiar, mouse-first** desktop with conventional panels, menus, overlapping windows and discoverable controls (Decisions 3.2 and 3.4); ordinary tasks must not require memorized shortcuts or automatic tiling.
 - Present a **warm, classical Catholic visual identity** through restrained sacred-art, architectural and typographic influences (Decision 3.6) alongside accent colors automatically reflecting the **current General Roman Calendar** (Decisions 2.5 and 2.7). Keep normal interface controls legible, usable and free from excessive ornamentation; do not require devotional applications.
 - Show **Sunday first** in the desktop calendar and use **AD/BC** where Moenarch-controlled date displays render explicit era names.
 - Respect the person using the desktop: the experience should be clear, considerate, and non-manipulative, not attention-grabbing for its own sake.
@@ -29,7 +29,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 - Retain the existing explicit-opt-in, test-only installation proof. The approved first-use experience calls for a separate **guided graphical installer launched from the live Plasma desktop**, not an automatically executed disk write (Decision 4.2). Include everything needed for the standard KDE Plasma installation on the USB image; build and verify the normal user-facing installation with networking disabled (Decision 4.4). **Unencrypted storage is preselected**, and users can explicitly opt into encryption after seeing the data-protection trade-off; independently verify both offline installation paths (Decision 4.6).
 - Partition a blank virtual disk.
 - Install a minimal Moenarch system using standard Arch installation primitives.
-- Configure bootloader, locale, user, networking, and release identity.
+- Configure bootloader, locale, **local user account with password**, networking, and release identity. First installed boot requires password login (Decision 4.8), independently of whether optional disk encryption was selected.
 - Reboot from disk and verify the installed system independently of the live image.
 
 ### Stage 3 — Declarative profiles and integrated desktop
@@ -37,7 +37,7 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 - Define `base`, `desktop`, `developer`, and `server` as composable package/service policies.
 - Keep one distribution and one installer rather than separate editions.
 - Add machine-readable profile validation.
-- Make the `desktop` profile a genuinely usable, cohesive **KDE Plasma** experience rather than merely an installable package list. Verify the actual installed mouse-first desktop user journey against the Decision Atlas.
+- Make the `desktop` profile a genuinely usable, cohesive **KDE Plasma** experience rather than merely an installable package list. Verify account-password login and the actual installed mouse-first desktop user journey against the Decision Atlas.
 
 ### Stage 4 — Moenarch packages
 
