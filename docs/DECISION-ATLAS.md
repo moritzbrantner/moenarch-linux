@@ -47,6 +47,10 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   The default desktop should reflect Catholic context in small, everyday details: **liturgical colors** in its visual language; **Sunday as the first day of the week** in calendars; and **AD/BC instead of CE/BCE** where dates are shown with historical era labels. These are experience requirements for the Moenarch-controlled desktop and its defaults, not claims that every unmodified third-party Linux program can be made to obey them. The precise use and behavior of liturgical colors remains unresolved in 2.4.
 
 - **2.4** [question] **How should liturgical colors affect the everyday desktop?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 2.5 (option A).  
   Should **A** the desktop's subtle accents reflect the liturgical day or season automatically, or **B** the system provide a stable Catholic-inspired color palette that users select independently of the calendar? Both should preserve legibility and restraint; this decision does not authorize unrelated devotional apps or additional background services.
 
+
+- **2.5 Liturgical-calendar-driven desktop accents.**  
+  Status: owner-approved 2026-10-14. Answers 2.4 (option A).  
+  Subtle default desktop accents automatically reflect the current Catholic liturgical day or season. Keep the presentation restrained and legible. The calendar source, rite/locality scope, exact theme mechanics, and optional customization remain to be specified.
