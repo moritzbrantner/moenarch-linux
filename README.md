@@ -16,7 +16,7 @@ Boot the installation media into a working live KDE Plasma desktop to explore Mo
 
 ## Installation image releases
 
-The normal public Moenarch installation image will be a **versioned, deliberately published ISO** that has passed integrated testing of the actual live desktop, guided offline installation and installed KDE Plasma experience. Passing CI builds remain development artifacts until separately accepted and released (Decision 7.4). Installed computers continue receiving native updates directly from Arch (Decision 7.2).
+The normal public Moenarch installation image will be a **versioned, deliberately published ISO** that has passed integrated testing of the actual live desktop, guided offline installation and installed KDE Plasma experience. Passing CI builds remain development artifacts until separately accepted and released (Decision 7.4). **Full QEMU acceptance, including failure recovery, is sufficient for the first public image; physical hardware tests are not a mandatory release gate**, and release notes must not imply hardware support that was not actually tested (Decision 7.6). Installed computers continue receiving native updates directly from Arch (Decision 7.2).
 
 ## System updates
 
