@@ -1,8 +1,9 @@
-// Permit only the live account to launch the established Calamares installer.
+// Calamares ships its own pkexec policy with allow_gui=true.
+// Only the live account may launch it without a separate admin password.
 // The rule is removed from the installed system before account creation.
 polkit.addRule(function (action, subject) {
     if (subject.user === "moenarch" &&
-        action.id === "org.freedesktop.policykit.exec" &&
+        action.id === "com.github.calamares.calamares.pkexec.run" &&
         action.lookup("program") === "/usr/bin/calamares") {
         return polkit.Result.YES;
     }

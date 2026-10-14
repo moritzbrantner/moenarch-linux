@@ -55,5 +55,11 @@ assert "moenarch-calamares" in installed
 native = (root / "usr/local/share/moenarch/pacman.conf").read_text()
 assert "[core]" in native and "[extra]" in native and "[moenarch-build]" not in native
 assert "MOENARCH_LOCAL_REPO" in (repo / "scripts/prepare-profile").read_text()
-assert "pkexec /usr/bin/calamares" in (root / "usr/local/bin/install-moenarch").read_text()
+launcher = (root / "usr/local/bin/install-moenarch").read_text()
+assert "pkexec /usr/bin/calamares" in launcher
+assert "lost or stolen" in launcher
+assert "userdel --force --remove" in installed
+policy = (root / "etc/polkit-1/rules.d/49-moenarch-installer.rules").read_text()
+assert "com.github.calamares.calamares.pkexec.run" in policy
+assert 'action.lookup("program") === "/usr/bin/calamares"' in policy
 print("Calamares safety, offline, login and recovery-layout contracts verified (static only).")

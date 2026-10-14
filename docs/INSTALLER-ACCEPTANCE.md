@@ -67,7 +67,7 @@ existing serial boot marker. Neither proves usable KDE installation.
 
 ## Network-disabled UEFI QEMU acceptance matrix (manual until automated)
 
-Use OVMF (Arch `edk2-ovmf`, Ubuntu `ovmf`) and QEMU with network explicitly
+Use raw virtual disks for whole-device SHA256 checks; qcow2 host metadata can\nchange even without guest filesystem writes. Use OVMF (Arch `edk2-ovmf`, Ubuntu `ovmf`) and QEMU with network explicitly
 absent; boot the ISO, *not* a network mirror. Allocate at least 4 GiB RAM
 and a 32 GiB **throwaway** target disk; store all VM disk images outside any
 important directory. Never execute disk destructive commands on host disks.
@@ -76,12 +76,12 @@ One illustrative invocation (replace OVMF paths with installed package paths;
 copy firmware VARS separately for each VM):
 
 ```bash
-qemu-img create -f qcow2 /tmp/moenarch-target.qcow2 32G
+truncate -s 32G /tmp/moenarch-target.raw
 cp /usr/share/OVMF/OVMF_VARS_4M.fd /tmp/moenarch-vars.fd
 qemu-system-x86_64 -machine q35,accel=tcg -m 4096 -smp 4 \
   -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.fd \
   -drive if=pflash,format=raw,file=/tmp/moenarch-vars.fd \
-  -drive if=virtio,format=qcow2,file=/tmp/moenarch-target.qcow2 \
+  -drive if=virtio,format=raw,file=/tmp/moenarch-target.raw \
   -cdrom out/moenarch-linux-YYYY.MM.DD-x86_64.iso \
   -nic none -display gtk
 ```

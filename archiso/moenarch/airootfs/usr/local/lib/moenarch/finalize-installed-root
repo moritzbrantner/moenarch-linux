@@ -10,7 +10,7 @@ id moenarch >/dev/null
 
 # The live image has uid 1000; release it before Calamares creates the
 # permanent user. Never enable live autologin for the installed system.
-userdel -r moenarch
+userdel --force --remove moenarch # Live KDE still runs as this UID outside the target chroot.
 rm -f /etc/sddm.conf.d/10-moenarch-live.conf
 rm -f /usr/share/applications/install-moenarch.desktop
 rm -f /etc/polkit-1/rules.d/49-moenarch-installer.rules
@@ -19,6 +19,8 @@ rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf
 rm -f /etc/systemd/system/multi-user.target.wants/moenarch-boot-marker.service
 rm -f /etc/pacman.d/hooks/90-moenarch-live-root.hook
 rm -f /usr/local/bin/moenarch-boot-marker
+rm -f /usr/local/bin/install-moenarch
+rm -f /usr/lib/systemd/system/moenarch-boot-marker.service
 
 # The build-only repository must not leak into direct official Arch updates.
 install -m0644 /usr/local/share/moenarch/pacman.conf /etc/pacman.conf
