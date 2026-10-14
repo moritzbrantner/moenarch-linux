@@ -116,6 +116,17 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   The guided Moenarch installer preselects **unencrypted system storage** for a fresh installation to avoid requiring an extra disk-unlock secret at each startup. The installer must still allow the user to **explicitly select encrypted storage** instead; neither choice may be silently switched. Explain the privacy and lost/stolen-device implications of leaving storage unencrypted before the user confirms installation. Both installation choices must respect the approved fully offline installation experience (4.4), explicit informed consent for disk writes (4.2), and the same standard KDE Plasma outcome. This does not decide whether the installed OS requires a user-login password at boot.
 
 - **4.7** [question] **Should the installed desktop require a user login at startup?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 4.8 (option A); retained as the historical Question.  
   After booting the installed system, should **A** the user enter their account password before accessing the desktop, or should **B** the system automatically log into the local desktop account? Unlike disk encryption (4.6), account login controls entry to a running OS rather than protecting a powered-off drive from offline access. Either option could be changed in settings later; this asks about the initial default.
+
+- **4.8 Require account-password login by default.**  
+  Status: owner-approved 2026-10-14. Answers 4.7 (option A).  
+  After installing Moenarch and booting from the disk, the normal default is a **graphical account login screen requiring the local user's password** before opening the KDE Plasma desktop, not automatic login. The guided installer must let the user set credentials for the account that will log in; installing and signing in must work **offline**. This is separate from disk encryption: under Decision 4.6 the system disk remains unencrypted by default, so account login does not protect the powered-off disk against offline data access. This choice does not determine session locking on suspend, multi-user account management, or whether users can subsequently opt into automatic login.
+
+## 5. Keeping the desktop updated
+
+- **5.1** [question] **How should Moenarch handle routine system updates by default?**  
+  Unanswered.  
+  Should it **automatically apply routine system and security updates in the background** with minimal user involvement (A), or **notify users and require explicit approval before applying updates** (B)? On an Arch-derived desktop the choice affects control over potentially disruptive changes, unattended package-management activity, and the reliability of an approachable everyday computer. In either case updates must remain understandable and recoverable; the question concerns default behavior, not whether users may ever change their preference.
+
 
