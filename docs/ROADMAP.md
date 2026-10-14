@@ -56,6 +56,12 @@ This milestone is a **product acceptance target**, not a claim that the desktop 
 - Verify notification, manual approval, automatic mode, persistence across restart, and clear update results/failure indications in a real installed desktop with controlled update inputs.
 - **Create a usable pre-update recovery point** and provide a **built-in restore path that remains accessible if KDE or the normal system fails to start** (Decision 5.4). Verify restoration after an intentionally breaking update without relying on the live desktop or only on terminal commands. **Restore only the OS, applications and relevant system configuration while preserving personal files**, including documents created or edited after the recovery point (Decision 5.6). **Offer a comprehensible built-in recovery choice without a working desktop, but perform no system rollback until the user explicitly confirms what will be restored** (Decision 5.8).
 
+## Graphical application management
+
+- Offer a discoverable, everyday **graphical way to find, install, launch and remove ordinary desktop applications** on the installed KDE Plasma system. Prefer **native packages from the Arch repositories** when an application is available through both Arch and Flatpak (Decision 6.2).
+- Identify each application's package source clearly. Use the existing Arch package manager for native installations rather than inventing another package-management authority; do not silently install a Flatpak in place of the preferred native package.
+- Verify an actual native application install, launch and removal from the installed desktop, plus consistent source preference when the same application has multiple available formats. Decision 6.2 does not require Flatpak support in the first implementation or approve AUR packages; AUR catalog visibility remains open in Question 6.3.
+
 ## Future product journeys
 
 After the first product milestone, independently usable Catholic applications and richer integration may advance the approved direction. Do not presume a particular prayer app, research assistant, content library, or content-control mechanism before further owner decisions. A Sunday-first **desktop calendar** is already approved under 2.3; a complete liturgical-calendar application is not.
