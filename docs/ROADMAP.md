@@ -6,11 +6,11 @@ The first user-facing milestone is the **quality and usability of the desktop it
 
 ## First product milestone — A dignified Catholic-contextual desktop
 
-- Install and use a coherent, polished graphical Linux desktop for ordinary daily tasks, not a shell with a few disconnected apps.
+- Install and use a coherent, polished graphical Linux desktop with a **familiar, mouse-first experience**: conventional panels and menus, overlapping windows, and discoverable application access and settings. Ordinary tasks must not require memorized keyboard shortcuts or automatic tiling (Decision 3.2).
 - Present Catholic identity through restrained accent colors that automatically reflect the current liturgical day or season (Decision 2.5), rather than requiring prominent devotional interfaces.
 - Show **Sunday first** in the desktop calendar and use **AD/BC** where Moenarch-controlled date displays render explicit era names.
 - Respect the person using the desktop: the experience should be clear, considerate, and non-manipulative, not attention-grabbing for its own sake.
-- Provide real user-facing evidence from the **installed graphical system**, including interactive calendar behavior, date-era formatting, and a captured desktop session. Demonstrate that liturgical accent colors change with representative liturgical dates and are reflected in the actual desktop.
+- Provide real user-facing evidence from the **installed graphical system**, including a complete mouse-driven journey (launching an app, managing windows, opening settings), interactive calendar behavior, date-era formatting, and a captured desktop session. Demonstrate that liturgical accent colors change with representative liturgical dates and are reflected in the actual desktop.
 
 This milestone is a **product acceptance target**, not a claim that the desktop is already implemented. It can be delivered through independently verifiable vertical slices without changing its intended end state. The system does not need dedicated Catholic prayer, research, or focus applications to meet this first milestone.
 
