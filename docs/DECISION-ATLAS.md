@@ -92,5 +92,13 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
 ## 4. Installation and first use
 
 - **4.1** [question] **What should someone encounter first when booting Moenarch installation media?**  
-  Unanswered.  
+  Answered 2026-10-14 by Decision 4.2 (option A); retained as the historical Question.  
   Should the installation medium boot into a **usable live KDE Plasma desktop with an Install action** (try first, then install), or **launch a guided installer before the full desktop** (installation-first)? Both must eventually support a straightforward graphical installation; this is about the real first-use flow, boot resources, and whether the system can be tried before committing to installation.
+
+- **4.2 Try the live Plasma desktop before installing.**  
+  Status: owner-approved 2026-10-14. Answers 4.1 (option A).  
+  Booting Moenarch installation media normally takes people into a **usable, approachable KDE Plasma live desktop** where they can explore Moenarch, try ordinary desktop actions and inspect hardware compatibility before making changes to their disk. A visible, discoverable **Install Moenarch** action starts a **guided graphical installer** when the person chooses to proceed; installation is not forced on boot. Exploring the live session must not write to or repartition disks as an incidental consequence of opening the desktop. Explicit installation choices and destructive operations must remain gated by informed user action. Keep the live and installed desktop experiences coherent with Decisions 2.2, 2.3, 2.5, 2.7, 3.2, 3.4 and 3.6. The existing headless/test-only installation harness is not the user-facing installer.
+
+- **4.3** [question] **Should the initial guided installer work without an internet connection?**  
+  Unanswered.  
+  Should the installation media contain the operating system needed for a full **offline installation** (larger download, usable without network access), or should installation **download system packages** after the live desktop starts (smaller image, connection required to finish)? Both still boot into the live desktop under Decision 4.2. The choice affects the USB image, installation user journey, and independent acceptance evidence.
