@@ -1,8 +1,8 @@
 # Roadmap
 
-This document tracks delivery milestones. The [Decision Atlas](DECISION-ATLAS.md) is the authority for user-facing product direction: a cohesive everyday Linux desktop that helps people grow closer to the Christian faith (1.1), with the initial faith experience primarily serving practicing Christians (1.3).
+This document tracks delivery milestones. The [Decision Atlas](DECISION-ATLAS.md) is the authority for user-facing product direction: a cohesive everyday Linux desktop that helps people grow closer to the Christian faith (1.1), with the initial faith experience primarily serving practicing Christians (1.3) within an explicitly Catholic liturgical and catechetical framework (1.5).
 
-The existing Arch-based build, installation, developer-environment and verification milestones remain foundations for that goal. Exact faith-focused workflows, tradition-specific defaults, and desktop technology choices remain unsettled; examples discussed in steering are not automatically approved features.
+The existing Arch-based build, installation, developer-environment and verification milestones remain foundations for that goal. The Catholic default is settled, but exact faith-focused workflows, content sources, and desktop technology choices remain unsettled; examples discussed in steering are not automatically approved features.
 
 ## Milestone 1 — Bootable distribution image
 
@@ -37,4 +37,4 @@ The existing Arch-based build, installation, developer-environment and verificat
 
 ## Future product journeys
 
-Following resolution of the relevant Atlas Questions, plan independently usable and verifiable desktop experiences that advance the approved Christian-oriented goal. Do not preselect a specific prayer app, liturgical calendar, content library, assistant, or filtering behavior from earlier suggestions alone.
+Following resolution of the relevant Atlas Questions, plan independently usable and verifiable desktop experiences that advance the approved Catholic-oriented goal. Do not preselect a specific prayer app, liturgical calendar, content library, assistant, or filtering behavior from earlier suggestions alone.
