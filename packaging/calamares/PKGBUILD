@@ -7,6 +7,8 @@ pkgdesc="Calamares upstream installer for Moenarch live media"
 arch=('x86_64')
 url="https://codeberg.org/Calamares/calamares"
 license=('GPL-3.0-or-later')
+# Only the runtime package belongs in the installation image.
+options=('!debug')
 depends=(
   'btrfs-progs' 'cryptsetup' 'kconfig' 'kcoreaddons' 'kcrash'
   'ki18n' 'kparts' 'kpmcore' 'kservice' 'kwidgetsaddons'

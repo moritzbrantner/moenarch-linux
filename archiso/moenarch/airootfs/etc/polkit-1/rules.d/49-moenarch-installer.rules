@@ -3,7 +3,7 @@
 // The rule is removed from the installed system before account creation.
 polkit.addRule(function (action, subject) {
     if (subject.user === "moenarch" &&
-        action.id === "com.github.calamares.calamares.pkexec.run" &&
+        action.id === "io.calamares.calamares.pkexec.run" &&
         action.lookup("program") === "/usr/bin/calamares") {
         return polkit.Result.YES;
     }

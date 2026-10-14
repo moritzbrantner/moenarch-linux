@@ -60,6 +60,6 @@ assert "pkexec /usr/bin/calamares" in launcher
 assert "lost or stolen" in launcher
 assert "userdel --force --remove" in installed
 policy = (root / "etc/polkit-1/rules.d/49-moenarch-installer.rules").read_text()
-assert "com.github.calamares.calamares.pkexec.run" in policy
+assert "io.calamares.calamares.pkexec.run" in policy
 assert 'action.lookup("program") === "/usr/bin/calamares"' in policy
 print("Calamares safety, offline, login and recovery-layout contracts verified (static only).")
