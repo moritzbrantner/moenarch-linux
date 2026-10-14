@@ -8,7 +8,7 @@ The [Decision Atlas](docs/DECISION-ATLAS.md) records approved product direction 
 
 ## First user-facing milestone
 
-Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first windows, menus, and settings, alongside subtle Catholic context: subtle accent colors that follow the Catholic liturgical day or season automatically, calendars starting on Sunday, and AD/BC era labels rather than CE/BCE. Its everyday experience should respect the dignity of the human soul. More explicitly Christian applications can follow later. See the [Decision Atlas](docs/DECISION-ATLAS.md) for approved direction and open details.
+Offer a polished, approachable **KDE Plasma** desktop with familiar mouse-first windows, menus, and settings, and a restrained, warm **classical Catholic visual identity**: subtle accent colors that follow the Catholic liturgical day or season automatically, calendars starting on Sunday, and AD/BC era labels rather than CE/BCE. Its everyday experience should respect the dignity of the human soul. More explicitly Christian applications can follow later. See the [Decision Atlas](docs/DECISION-ATLAS.md) for approved direction and open details.
 
 ## Engineering foundation
 
