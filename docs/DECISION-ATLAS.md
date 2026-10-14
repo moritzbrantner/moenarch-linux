@@ -54,3 +54,9 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
 - **2.5 Liturgical-calendar-driven desktop accents.**  
   Status: owner-approved 2026-10-14. Answers 2.4 (option A).  
   Subtle default desktop accents automatically reflect the current Catholic liturgical day or season. Keep the presentation restrained and legible. The calendar source, rite/locality scope, exact theme mechanics, and optional customization remain to be specified.
+
+## 3. Everyday desktop interaction
+
+- **3.1** [question] **What interaction model should the first desktop prioritize?**  
+  Unanswered.  
+  Should Moenarch start with a keyboard-first automatically tiling desktop and launcher-driven workflows, or a conventional mouse-first windowed desktop with familiar panels and overlapping windows? Both should be polished and usable. The choice is about the default first-minute experience, not prohibiting customization.
