@@ -22,6 +22,10 @@ The normal public Moenarch installation image will be a **versioned, deliberatel
 
 Native system packages receive available updates directly from the **official Arch rolling repositories**, without a separate Moenarch-managed staging feed (Decision 7.2). The installed desktop will notify people when system updates are available. By default, updates require user approval, and a persistent setting allows switching to automatic installation and back (Decision 5.2). Updates must establish a usable pre-update recovery point, with built-in recovery even if the normal graphical desktop cannot start (Decision 5.4). Restoring must revert broken system state while **preserving personal documents and files** (Decision 5.6). The recovery option is accessible without a working desktop, but **restoration requires explicit user confirmation** rather than an automatic rollback after failed boot (Decision 5.8).
 
+## Personal-file backups
+
+The initial release does **not include a required built-in personal-file backup setup or restore experience** (Decision 8.2). The pre-update recovery feature reverts a broken system while preserving files that still exist, but **is not a backup**: it does not protect against accidental deletion, file corruption, drive failure or theft. Keep independent copies of important files on separate storage, especially before confirming a disk-erasing installation. Optional backup tools can be installed separately; no automatic cloud backup is assumed.
+
 ## Installing applications
 
 The standard desktop includes only the **essential applications needed for everyday use**; users can add other software through the graphical catalog (Decision 6.6). The intended graphical software experience prefers **native Arch repository packages** for desktop applications when both a native package and a Flatpak are available. Sources must be visible, and Flatpak is not forbidden. **AUR packages are excluded from the initial graphical catalog**, while experienced users may choose to use AUR tooling separately (Decisions 6.2 and 6.4).
