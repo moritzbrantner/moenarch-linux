@@ -97,6 +97,10 @@ This is the owner-approved authority for **what Moenarch Linux should offer its 
   Status: owner-approved 2026-10-15. Answers Question 2.14, option A.  
   Automatic liturgical accent colors remain the default. When a signed-in user deliberately selects a fixed KDE accent or accent-setting theme, that choice overrides automatic calendar colors for their account until they deliberately re-enable automatic accents. Persist this per-account mode and fixed accent through calendar date changes, sign-outs and restarts; do not alter another account's choice or the user's selected country/diocesan calendar. Provide a discoverable way to restore automatic colors, using the user's own selected calendar and packaged offline data. Changes to unrelated appearance settings need not disable automatic accents. Verify the manual choice, daily rollover, restart, returning to automatic mode and multi-account isolation in the actual installed KDE desktop.
 
+- **2.16** [question] **How broad should first-release national and diocesan calendar coverage be?**  
+  Unanswered.  
+  Decision 2.11 supports explicit selection of packaged country and diocesan calendars, but has not chosen the initial geographic coverage. Should the first release **A** start with **one explicitly identified country and one diocese** with authoritative, offline, end-to-end calendar tests and expand later, or **B** require **multiple countries and multiple dioceses** to be supported and independently verified before the first public ISO? Both keep the General Roman default (2.7), per-account selection (2.13), and offline data (2.9); neither claims unsupported jurisdictions.
+
 ## 3. Everyday desktop interaction
 
 - **3.1** [question] **What interaction model should the first desktop prioritize?**  
