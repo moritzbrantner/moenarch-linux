@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Inspect what is actually packaged into the candidate image, not only inputs.
+set -euo pipefail
+iso="${1:?Pass the actual built ISO path}"
+if [[ ! -f "$iso" ]]; then
+  echo "Missing ISO: $iso" >&2
+  exit 1
+fi
+for cmd in bsdtar unsquashfs; do
+  command -v "$cmd" >/dev/null || { echo "Install $cmd" >&2; exit 1; }
+done
+temporary="$(mktemp -d)"
+trap 'rm -rf -- "$temporary"' EXIT
+bsdtar -xOf "$iso" moenarch/x86_64/airootfs.sfs >"$temporary/airootfs.sfs"
+if [[ ! -s "$temporary/airootfs.sfs" ]]; then
+  echo 'Missing packaged Archiso live filesystem' >&2
+  exit 1
+fi
+unsquashfs -l "$temporary/airootfs.sfs" >"$temporary/contents"
+for item in \
+  usr/bin/calamares \
+  usr/bin/dolphin \
+  usr/bin/kate \
+  usr/bin/firefox \
+  usr/bin/gwenview \
+  usr/bin/haruna \
+  usr/bin/sddm \
+  usr/share/xsessions/plasmax11.desktop \
+  etc/calamares/settings.conf \
+  etc/calamares/modules/partition.conf \
+  usr/local/lib/moenarch/finalize-installed-root; do
+  if ! grep -Fq "squashfs-root/$item" "$temporary/contents"; then
+    echo "Missing packaged ISO payload: $item" >&2
+    exit 1
+  fi
+done
+printf 'Actual ISO includes installer, KDE X11 and essential applications.\n'

@@ -7,6 +7,11 @@ on:
       - main
   workflow_dispatch:
 
+# Avoid rebuilding the large KDE image for superseded PR heads.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -15,43 +20,53 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Install shellcheck
-        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Install validators
+        run: sudo apt-get update && sudo apt-get install -y shellcheck python3-yaml
       - name: Validate profile contracts
         run: ./tests/validate-profile
+      - name: Validate installer and recovery-compatible layout
+        run: python3 ./tests/validate-installer
       - name: Shellcheck
         run: |
           shellcheck \
             archiso/moenarch/profiledef.sh \
             archiso/moenarch/airootfs/usr/local/lib/moenarch/finalize-live-root \
+            archiso/moenarch/airootfs/usr/local/lib/moenarch/finalize-installed-root \
+            archiso/moenarch/airootfs/usr/local/bin/install-moenarch \
             archiso/moenarch/airootfs/usr/local/bin/moenarch-boot-marker \
             scripts/prepare-profile \
+            scripts/build-calamares \
             scripts/build-iso \
             scripts/test-iso-boot \
+            scripts/verify-iso-payload \
             tests/validate-profile
 
   iso:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7
-      - name: Build Moenarch ISO with Archiso
+      - name: Build Moenarch ISO with pinned upstream Calamares
         run: |
           docker run --rm --privileged \
             -v "$PWD:/workspace" \
             -w /workspace \
             archlinux:base-devel \
             bash -lc 'pacman -Syu --noconfirm --needed archiso git && git config --global --add safe.directory /workspace && ./scripts/build-iso'
-      - name: Install QEMU
-        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
+      - name: Install QEMU and ISO extraction tools
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 libarchive-tools squashfs-tools
+      - name: Validate packages inside generated ISO
+        run: ./scripts/verify-iso-payload out/moenarch-linux-*.iso
       - name: Boot and verify distribution identity
         run: ./scripts/test-iso-boot
-      - name: Upload ISO evidence
+      - name: Upload ISO and build evidence
+        if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: moenarch-linux-iso
+          name: moenarch-linux-iso-candidate
           path: |
             out/*.iso
             out/SHA256SUMS
             out/build-manifest.txt
-          if-no-files-found: error
+            .build/moenarch-qemu-serial.log
+          if-no-files-found: warn

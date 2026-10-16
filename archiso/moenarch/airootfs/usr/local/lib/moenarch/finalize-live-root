@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Executed once inside mkarchiso's airootfs, never on a booted live system.
 set -euo pipefail
 
 install -Dm0644 /usr/local/share/moenarch/os-release /usr/lib/os-release
@@ -6,11 +7,24 @@ ln -sfn ../usr/lib/os-release /etc/os-release
 printf 'moenarch\n' >/etc/hostname
 cat >/etc/motd <<'EOF'
 Moenarch Linux
-Arch-derived. Small surface. Verified changes.
+Try KDE Plasma without touching your disks. Run Install Moenarch to install.
 EOF
 
+# SDDM's live autologin must never be copied into an installed system.
+if ! id -u moenarch >/dev/null 2>&1; then
+  useradd -m -s /bin/bash -G wheel,video,audio,storage moenarch
+fi
+install -d -o moenarch -g moenarch -m 0755 /home/moenarch/Desktop
+install -o moenarch -g moenarch -m 0755 \
+  /usr/share/applications/install-moenarch.desktop /home/moenarch/Desktop/install-moenarch.desktop
+
+# Leave the existing serial boot marker for CI; boot into KDE in normal use.
 mkdir -p /etc/systemd/system/multi-user.target.wants
 ln -sfn /usr/lib/systemd/system/moenarch-boot-marker.service \
   /etc/systemd/system/multi-user.target.wants/moenarch-boot-marker.service
+ln -sfn /usr/lib/systemd/system/sddm.service /etc/systemd/system/display-manager.service
+ln -sfn /usr/lib/systemd/system/graphical.target /etc/systemd/system/default.target
+# Archiso releng automatically logs root into tty1. KDE's greeter owns that VT.
+ln -sfn /dev/null /etc/systemd/system/getty@tty1.service
 
 rm -f -- "$0"

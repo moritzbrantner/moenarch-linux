@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Moenarch
+Comment=Install to an explicitly selected dedicated disk (selected disk will be erased)
+Exec=/usr/local/bin/install-moenarch
+Icon=drive-harddisk
+Terminal=false
+Categories=System;
+Keywords=Install;Setup;Moenarch;

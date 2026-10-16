@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# UEFI-only installer until BIOS systemd-boot installation is supported.
+# Secure Boot enabled firmware is not yet a release-supported configuration.
+if [[ ! -d /sys/firmware/efi ]]; then
+  kdialog --error 'Moenarch installation currently requires UEFI boot. Reboot the installer USB in UEFI mode.'
+  exit 1
+fi
+# Explain the physical security trade-off before users make storage choices.
+# This dialog is non-destructive; Calamares separately confirms disk erasure.
+if ! kdialog --title 'Install Moenarch' --yesno \
+  'The selected installation disk will be completely erased, only after you select it and confirm in the installer.
+
+Unencrypted storage is the default. Anyone with physical access to a lost or stolen unencrypted disk can read its files, even if graphical login requires a password.
+
+You can explicitly choose LUKS2 storage encryption, which requires an unlock passphrase at startup. Losing that passphrase can permanently make files inaccessible.
+
+Continue to the installer?'; then
+  exit 0
+fi
+exec pkexec /usr/bin/calamares

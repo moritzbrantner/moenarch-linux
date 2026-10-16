@@ -1,0 +1,54 @@
+# Calamares is not part of the official Arch repos. Build the established
+# upstream installer locally into an ISO-build-only pacman repository.
+pkgname=moenarch-calamares
+pkgver=3.4.2
+pkgrel=1
+pkgdesc="Calamares upstream installer for Moenarch live media"
+arch=('x86_64')
+url="https://codeberg.org/Calamares/calamares"
+license=('GPL-3.0-or-later')
+# Only the runtime package belongs in the installation image.
+options=('!debug')
+depends=(
+  'btrfs-progs' 'cryptsetup' 'kconfig' 'kcoreaddons' 'kcrash'
+  'ki18n' 'kparts' 'kpmcore' 'kservice' 'kwidgetsaddons'
+  'networkmanager' 'polkit-qt6' 'python' 'qt6-base' 'qt6-declarative'
+  'qt6-svg' 'rsync' 'solid' 'squashfs-tools' 'yaml-cpp'
+)
+makedepends=(
+  'cmake' 'extra-cmake-modules' 'git' 'ninja'
+  'qt6-tools' 'pybind11' 'python' 'kconfig' 'kcoreaddons'
+  'kcrash' 'ki18n' 'kparts' 'kpmcore' 'kservice'
+  'kwidgetsaddons' 'polkit-qt6' 'qt6-base' 'qt6-declarative'
+  'qt6-svg' 'solid' 'yaml-cpp'
+)
+source=("https://codeberg.org/Calamares/calamares/releases/download/v${pkgver}/calamares-${pkgver}.tar.gz"
+        'whole-disk-only.patch')
+sha256sums=('733bbbb00dc9f84874bd5c22960952f317ea2537565431179fa2152b2fbfdccc'
+            'SKIP')
+
+prepare() {
+  cd "calamares-${pkgver}"
+  # Upstream has no switch to disable *both* replace and alongside.
+  # Keep this downstream patch small and limited to the unsafe actions.
+  patch -p1 -i "${srcdir}/whole-disk-only.patch"
+}
+
+build() {
+  cmake -S "calamares-${pkgver}" -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DWITH_QT6=ON \
+    -DWITH_PYTHON=ON \
+    -DWITH_PYBIND11=ON \
+    -DINSTALL_CONFIG=OFF \
+    -DBUILD_TESTING=OFF \
+    -DBUILD_SCHEMA_TESTING=OFF \
+    -DBUILD_CRASH_REPORTING=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install build
+}

@@ -1,2 +1,30 @@
-# Packages Moenarch adds to Archiso's releng package set.
+# Packages added to Archiso's releng base. Live and installed KDE share this payload.
 git
+plasma-desktop
+plasma-nm
+plasma-x11-session
+systemsettings
+sddm
+xorg-server
+networkmanager
+dolphin
+konsole
+kate
+firefox
+gwenview
+haruna
+ark
+xdg-user-dirs
+polkit-kde-agent
+kdialog
+btrfs-progs
+cryptsetup
+dosfstools
+efibootmgr
+gptfdisk
+grub
+mkinitcpio
+rsync
+squashfs-tools
+sudo
+moenarch-calamares
