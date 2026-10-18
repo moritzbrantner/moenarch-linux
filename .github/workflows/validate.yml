@@ -55,3 +55,14 @@ jobs:
             out/SHA256SUMS
             out/build-manifest.txt
           if-no-files-found: error
+
+  merge-ready:
+    name: merge-ready
+    if: ${{ always() }}
+    needs: ["static", "iso"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: moritzbrantner/reusable-workflows/.github/actions/merge-ready@b0f25f241d76af2584dfc9e375084ff5c5cb97da
+        with:
+          needs: ${{ toJSON(needs) }}
+          required: '["static", "iso"]'
